@@ -1,12 +1,13 @@
 <script>
   import Chart from './layouts/Chart';
+  import Settings from './layouts/Settings';
   import { STATES } from './constants';
-  let state = STATES.chart;
+  let state = STATES.initial;
 </script>
 
 <div class="content {state}">
-  <div class="layout"></div>
-  <Chart />
+  <Settings onNext={() => (state = STATES.chart)} />
+  <Chart onBack={() => (state = STATES.initial)} />
 </div>
 
 <style>

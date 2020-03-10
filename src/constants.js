@@ -5,8 +5,8 @@ const PORT = {
 };
 
 const SEPARATORS = Buffer.alloc(4);
-SEPARATORS.writeUInt16BE(6891);
-SEPARATORS.writeUInt16BE(25500, 2);
+SEPARATORS.writeUInt16BE(18735);
+SEPARATORS.writeUInt16BE(869, 2);
 
 const STATES = {
   initial: 'params',
@@ -14,29 +14,34 @@ const STATES = {
 };
 
 const STATE_DATA = [
-  'mode',
-  'connectionType',
-  'pumpOn',
-  'ligtingOn',
   'pumpPower',
+  'mode',
+  'ligtingOn',
 ];
 
-const IV_DATA = ['voltage', 'current'];
+const IV_DATA = ['voltage', 'current', 'setLoad'];
 
 const DATA_BYTE_LENGTH =
   STATE_DATA.length + IV_DATA.length * 2 + SEPARATORS.length;
 
 const COMMANDS = {
-  setParaller: [4, 0],
-  setSeries: [4, 0],
   turnOnLighting: [4, 0],
-  turnOffLighting: [4, 0],
-  turnOffPump: [4, 0],
-  turnOnPump: [4, 0],
-  setCurrent: v => [4, v * 10],
-  setVoltage: v => [4, v * 10],
-  setPower: v => [12, v],
+  turnOffLighting: [8, 0],
+  start: [12, 0],
+  stop: [16, 0],
+  setPumpPower: v => [20, v],
+  setMode: v => [24, v],
+  setLoadMode: v => [28, v],
+  setLoad: v => [32, v * 10],
 };
+
+const CONSTRAINTS = {
+  voltageParallel: [0, 1.7],
+  voltageSeries: [0, 6.8],
+  currentParallel: [0, 1.5],
+  currentSeries: [0, 0.4],
+  
+}
 
 module.exports = {
   IS_RPI,
@@ -47,4 +52,5 @@ module.exports = {
   IV_DATA,
   STATE_DATA,
   DATA_BYTE_LENGTH,
+  CONSTRAINTS
 };
