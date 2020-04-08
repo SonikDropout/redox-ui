@@ -4,7 +4,7 @@
   import RangeInput from '../molecules/RangeInput';
   import Toggle from '../atoms/Toggle';
   import Switch from '../atoms/Switch';
-  import { stateData, IVData } from '../stores';
+  import { stateData, IVData, connectionType } from '../stores';
   import { COMMANDS, CONSTRAINTS } from '../constants';
   export let onNext;
 
@@ -14,21 +14,21 @@
   ];
 
   const chargingOptions = [
-    {label: 'зарядка постояным током', value: 1},
-    {label: 'зарядка постояным напряжением', value: 2},
-  ]
+    { label: 'зарядка постояным током', value: 1 },
+    { label: 'зарядка постояным напряжением', value: 2 },
+  ];
 
   const dischargingOptions = [
-    {label: 'разрядка постояным током', value: 1},
-    {label: 'разрядка постояным напряжением', value: 2},
-  ]
+    { label: 'разрядка на внеш. нагрузке', value: 0 },
+    { label: 'разрядка постояным током', value: 1 },
+    { label: 'разрядка постояным напряжением', value: 2 },
+  ];
 
-  let selectedConnectionType = 0,
-    isCharging = $stateData.mode,
+  let isCharging = $stateData.mode,
     pumpPower = $stateData.pumpPower;
 
   function setConnectionType(type) {
-    selectedConnectionType = type;
+    connectionType.set(+type);
   }
 
   function togglePump(e) {
@@ -73,11 +73,14 @@
       style="grid-column: 5 / 8"
       options={connectionTypeOptions}
       onChange={setConnectionType}
-      defaultValue={selectedConnectionType} />
+      defaultValue={connectionType} />
     <div class="label right">Насосы</div>
     <Toggle style="grid-column: 5 / 6" on:change={togglePump} />
     <div class="label right">Подсветка</div>
-    <Toggle style="grid-column: 5 / 6" on:change={toggleLight} checked={$stateData.lightingOn} />
+    <Toggle
+      style="grid-column: 5 / 6"
+      on:change={toggleLight}
+      checked={$stateData.lightingOn} />
     <div class="dbc-label right">
       Мощность насосов
       <br />
@@ -93,11 +96,16 @@
       checked={!!$stateData.mode} />
     <div class="long-label right">Характеристики режима работы</div>
     <Select
+      defaultValue={$stateData.mode}
       style="grid-column: span 5"
       options={isCharging ? chargingOptions : dischargingOptions}
       onChange={setMode} />
     <div class="label right">Значение тока, мА</div>
-    <RangeInput style="grid-column: 5 / 7" onChange={setLoad} value={$IVData.setLoad} range={CONSTRAINTS.voltgeCharge} />
+    <RangeInput
+      style="grid-column: 5 / 7"
+      onChange={setLoad}
+      value={$IVData.setLoad}
+      range={CONSTRAINTS.voltgeCharge} />
   </main>
   <footer>
     <Button on:click={onNext}>Построение графиков</Button>

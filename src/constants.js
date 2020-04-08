@@ -13,11 +13,7 @@ const STATES = {
   chart: 'chart',
 };
 
-const STATE_DATA = [
-  'pumpPower',
-  'mode',
-  'ligtingOn',
-];
+const STATE_DATA = ['pumpPower', 'mode', 'ligtingOn'];
 
 const IV_DATA = ['voltage', 'current', 'setLoad'];
 
@@ -29,10 +25,10 @@ const COMMANDS = {
   turnOffLighting: [8, 0],
   start: [12, 0],
   stop: [16, 0],
-  setPumpPower: v => [20, v],
-  setMode: v => [24, v],
-  setLoadMode: v => [28, v],
-  setLoad: v => [32, v * 10],
+  setPumpPower: (v) => [20, v],
+  setMode: (v) => [24, v],
+  setLoadMode: (v) => [28, v],
+  setLoad: (v) => [32, v * 10],
 };
 
 const CONSTRAINTS = {
@@ -40,8 +36,9 @@ const CONSTRAINTS = {
   voltageSeries: [0, 6.8],
   currentParallel: [0, 1.5],
   currentSeries: [0, 0.4],
-  
-}
+};
+
+CONNECTION_TYPES = ['Последовательное', 'Параллельное'];
 
 module.exports = {
   IS_RPI,
@@ -52,5 +49,6 @@ module.exports = {
   IV_DATA,
   STATE_DATA,
   DATA_BYTE_LENGTH,
-  CONSTRAINTS
+  CONSTRAINTS,
+  CONNECTION_TYPES,
 };

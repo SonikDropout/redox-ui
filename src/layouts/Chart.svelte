@@ -6,7 +6,8 @@
   import 'chartjs-plugin-zoom';
   import configureChart from './chart.config';
   import { onMount } from 'svelte';
-  import { IVData, stateData } from '../stores';
+  import { IVData, stateData, connectionType } from '../stores';
+  import { CONNECTION_TYPES } from '../constants';
   export let onBack;
 
   onMount(() => {
@@ -27,7 +28,7 @@
   ];
 
   const yOptions = [
-    { label: 'ток', value: 0, symbol: 'I, A' },
+    { label: 'ток', value: 2, symbol: 'I, A' },
     { label: 'напряжение', value: 1, symbol: 'U, B' },
   ];
 
@@ -75,19 +76,21 @@
 
   function subscribeData() {
     timeStart = Date.now();
-    unsubscribeData = commonData.subscirbe(addPoint);
+    unsubscribeData = IVData.subscirbe(addPoint);
   }
 
-  function addPoint(data) {
-    chart.data.datasets[0].data.push({
-      x: data[xAxis.value],
-      y: data[yAxis.value],
-    });
+  function addPoint(iv) {
+    points.push([timeStart++, iv.voltage, iv.current]);
+    updateChart();
   }
 
-  function updateChart(p) {
-    points.push(p);
-    chart.data.datasets[0].data = points;
+  function updateChart() {
+    chart.data.datasets[0].data = points
+      .map(row => ({
+        x: row[xAxis.value],
+        y: row[yAxis.value],
+      }))
+      .sort((p1, p2) => p1.x - p2.x);
     chart.update();
   }
 
@@ -111,7 +114,7 @@
     <div class="label">Режим работы</div>
     <div class="long-value">{$stateData.mode}</div>
     <div class="label">Тип соединения МЭБ</div>
-    <div class="long-value">{$stateData.connectionType}</div>
+    <div class="long-value">{CONNECTION_TYPES[$connectionType]}</div>
     <div class="short-label">Ось х</div>
     <Select
       options={xOptions}
@@ -124,7 +127,7 @@
       options={yOptions}
       defaultValue={yAxis.value}
       style="grid-column: 2 / 4"
-      onChange={i => (yAxis = yOptions[i])} />
+      onChange={i => (yAxis = yOptions[+i % 2])} />
     <Button style="grid-area: 6 / 4 / 8 / 6" on:click={toggleDrawing}>
       {isDrawing ? 'Стоп' : 'Старт'}
     </Button>
