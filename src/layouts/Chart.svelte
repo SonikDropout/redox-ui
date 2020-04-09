@@ -1,6 +1,7 @@
 <script>
   import Select from '../molecules/Select';
   import Button from '../atoms/Button';
+  import SaveButton from '../organisms/SaveButton';
   import { ipcRenderer } from 'electron';
   import Chart from 'chart.js';
   import 'chartjs-plugin-zoom';
@@ -8,7 +9,6 @@
   import { onMount } from 'svelte';
   import { IVData, stateData, connectionType } from '../stores';
   import { CONNECTION_TYPES } from '../constants';
-  export let onBack;
 
   onMount(() => {
     chart = new Chart(
@@ -18,9 +18,6 @@
     chart.options.onClick = chart.resetZoom;
   });
 
-  ipcRenderer.send('usbStorageRequest');
-  ipcRenderer.on('usbConnected', () => (saveDisabled = false));
-  ipcRenderer.on('usbDisconnected', () => (saveDisabled = true));
 
   const xOptions = [
     { label: 'время', value: 0, symbol: 't, c' },
@@ -67,6 +64,7 @@
   function startLogging() {
     const fileName = '';
     const headers = [];
+    saveDisabled = false;
     ipcRenderer.send('startFileWrite', fileName, headers);
   }
 
@@ -76,7 +74,7 @@
 
   function subscribeData() {
     timeStart = Date.now();
-    unsubscribeData = IVData.subscirbe(addPoint);
+    unsubscribeData = IVData.subscribe(addPoint);
   }
 
   function addPoint(iv) {
@@ -96,10 +94,6 @@
 
   function sendToLogger(row) {
     ipcRenderer.send('excelRow', row);
-  }
-
-  function saveFile() {
-    ipcRenderer.send('saveFile');
   }
 </script>
 
@@ -140,10 +134,8 @@
     </div>
   </main>
   <footer>
-    <Button on:click={onBack}>Назад</Button>
-    <Button on:click={saveFile} disabled={saveDisabled}>
-      Сохранить данные на USB-устройство
-    </Button>
+    <Button on:click={() => window.scrollTo(0, 0)}>Назад</Button>
+    <SaveButton disabled={saveDisabled} />
   </footer>
 </div>
 

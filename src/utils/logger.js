@@ -8,8 +8,8 @@ let wb,
   dataStyle,
   row = 1;
 
-function createFile(fileName, headers) {
-  fileName = fileName;
+function createFile(name, headers) {
+  fileName = name;
   wb = new Workbook();
   ws = wb.addWorksheet('Результаты');
   if (!headerStyle) createStyles();
@@ -30,9 +30,8 @@ function writeRow(entries) {
   row++;
 }
 
-function saveFile(dir) {
-  wb.write(path.join(dir, fileName));
-  wb = ws = fileName = void 0;
+function saveFile(dir, cb = () => {}) {
+  wb.write(path.join(dir, fileName), cb);
 }
 
 function createStyles() {

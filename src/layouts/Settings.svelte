@@ -6,7 +6,6 @@
   import Switch from '../atoms/Switch';
   import { stateData, IVData, connectionType } from '../stores';
   import { COMMANDS, CONSTRAINTS } from '../constants';
-  export let onNext;
 
   const connectionTypeOptions = [
     { label: 'последовательное', value: 0 },
@@ -108,7 +107,7 @@
       range={CONSTRAINTS.voltgeCharge} />
   </main>
   <footer>
-    <Button on:click={onNext}>Построение графиков</Button>
+    <Button on:click={() => window.scrollTo(0, window.innerHeight)}>Построение графиков</Button>
   </footer>
 </div>
 
