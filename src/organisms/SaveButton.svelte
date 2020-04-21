@@ -46,7 +46,7 @@
 </Button>
 {#if saveMessage}
   <div class="popup" transition:fly={{ y: -200 }}>
-    <span class="popup-close">x</span>
+    <span class="popup-close">&#x2573;</span>
     <p class:error={isSaveFailed}>{saveMessage}</p>
     <Button on:click={ejectUSB} size="sm">извлечь</Button>
   </div>
@@ -64,13 +64,13 @@
   }
   .popup {
     position: fixed;
-    top: 1rem;
+    top: 3px;
     left: calc(50% - 15rem);
     width: 30rem;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    padding: 0 2rem 1rem;
+    border-radius: 4px;
+    box-shadow: 0 0 6px -1px var(--text-color);
     background-color: var(--bg-color);
-    border-radius: 8px;
-    padding: 1.6rem;
     line-height: 1.5;
     z-index: 9999;
   }
@@ -78,6 +78,7 @@
     position: absolute;
     top: 2rem;
     right: 2rem;
+    font-size: 1rem;
     color: var(--coporate-grey-darken);
     cursor: pointer;
   }

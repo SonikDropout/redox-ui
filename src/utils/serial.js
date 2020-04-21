@@ -8,22 +8,12 @@ const emitter = new EventEmitter();
 
 serial.on('data', handleData);
 
-let buffer = Buffer.from([]);
-
 function handleData(buf) {
-  if (buf.toString('ascii').startsWith('ok')) buf = buf.slice(2);
-  idx = buf.indexOf(SEPARATORS);
-  if (idx != -1) {
-    buffer = Buffer.concat([buffer, buf.slice(0, idx)]);
-    console.log(buffer);
-    try {
-      emitter.emit('data', parse(buffer));
-    } catch (e) {
-      // console.error('There is a hole in your logic:', e);
-    }
-    buffer = buf.slice(idx);
-  } else {
-    buffer = Buffer.concat([buffer, buf]);
+  if (buf.toString('ascii') == 'ok') return;
+  try {
+    emitter.emit('data', parse(buf));
+  } catch (e) {
+    console.error('There is a hole in your logic:', e);
   }
 }
 
@@ -48,10 +38,10 @@ function writeCommandFromQueue() {
   serial.write(cmd);
   serial.once('data', (buf) => {
     console.log('Recieved answer:', buf);
-    if (!buf.toString('ascii').startsWith('ok')) {
+    if (buf.toString('ascii') != 'ok') {
       commandQueue.unshift(cmd);
-      writeCommandFromQueue();
     }
+    writeCommandFromQueue();
   });
 }
 

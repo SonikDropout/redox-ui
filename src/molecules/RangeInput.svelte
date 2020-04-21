@@ -8,9 +8,10 @@
   export let style;
   export let step = 1;
 
-  $: min = Math.min.apply(null, range);
-  $: max = Math.max.apply(null, range);
-  $: value = Math.min(Math.max(defaultValue, range[0]), range[1]);
+  $: min = range[0];
+  $: max = range[1];
+  $: value = Math.min(Math.max(defaultValue, min), max);
+  $: precision = -Math.min(0, +step.toExponential().split('e')[1])
 
   let timeout,
     interval,
@@ -62,7 +63,7 @@
     on:pointerup={release}>
     <span>-</span>
   </button>
-  <span class="input">{value}</span>
+  <span class="input">{value.toFixed(precision)}</span>
   <button
     disabled={value >= max || disabled}
     class="incrementer"

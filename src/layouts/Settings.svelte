@@ -6,6 +6,7 @@
   import Switch from '../atoms/Switch';
   import { stateData, IVData, connectionType } from '../stores';
   import { COMMANDS, CONSTRAINTS } from '../constants';
+  import { ipcRenderer } from 'electron';
 
   const connectionTypeOptions = [
     { label: 'последовательное', value: 0 },
@@ -24,6 +25,7 @@
   ];
 
   let isCharging = $stateData.mode,
+    loadMode = $stateData.loadMode,
     pumpPower = $stateData.pumpPower;
 
   function setConnectionType(type) {
@@ -50,13 +52,12 @@
     ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(p));
   }
   function toggleMode(e) {
-    ipcRenderer.send(
-      'serialCommand',
-      COMMANDS.setMode(Number(e.target.checked))
-    );
+    isCharging = e.target.checked;
+    ipcRenderer.send('serialCommand', COMMANDS.setMode(Number(isCharging)));
   }
-  function setMode(m) {
-    ipcRenderer.send('serialCommand', COMMANDS.setMode(m));
+  function setLoadMode(m) {
+    loadMode = +m;
+    ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(+m));
   }
 
   function setLoad(v) {
@@ -72,7 +73,7 @@
       style="grid-column: 5 / 8"
       options={connectionTypeOptions}
       onChange={setConnectionType}
-      defaultValue={connectionType} />
+      defaultValue={$connectionType} />
     <div class="label right">Насосы</div>
     <Toggle style="grid-column: 5 / 6" on:change={togglePump} />
     <div class="label right">Подсветка</div>
@@ -95,19 +96,26 @@
       checked={!!$stateData.mode} />
     <div class="long-label right">Характеристики режима работы</div>
     <Select
-      defaultValue={$stateData.mode}
+      defaultValue={$stateData.loadMode}
       style="grid-column: span 5"
       options={isCharging ? chargingOptions : dischargingOptions}
-      onChange={setMode} />
-    <div class="label right">Значение тока, мА</div>
-    <RangeInput
-      style="grid-column: 5 / 7"
-      onChange={setLoad}
-      value={$IVData.setLoad}
-      range={CONSTRAINTS.voltgeCharge} />
+      onChange={setLoadMode} />
+    {#if loadMode}
+      <div class="label right">
+        Значение {loadMode === 1 ? 'тока, А' : 'напряжения, В'}
+      </div>
+      <RangeInput
+        style="grid-column: 5 / 7"
+        step={0.1}
+        onChange={setLoad}
+        defaultValue={$IVData.setLoad}
+        range={CONSTRAINTS[(loadMode === 1 ? 'current' : 'voltage') + ($connectionType === 1 ? 'Prallel' : 'Series')]} />
+    {/if}
   </main>
   <footer>
-    <Button on:click={() => window.scrollTo(0, window.innerHeight)}>Построение графиков</Button>
+    <Button on:click={() => window.scrollTo(0, window.innerHeight)}>
+      Построение графиков
+    </Button>
   </footer>
 </div>
 

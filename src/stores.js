@@ -9,7 +9,7 @@ const IVData = writable(mergeKeysValues(IV_DATA, initialData.iv));
 const stateData = writable(mergeKeysValues(STATE_DATA, initialData.state));
 const connectionType = writable(0);
 
-ipcRenderer.on('serialData', data => {
+ipcRenderer.on('serialData', (e, data) => {
   IVData.set(mergeKeysValues(IV_DATA, data.iv));
   stateData.set(mergeKeysValues(STATE_DATA, data.state));
 })

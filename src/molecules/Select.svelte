@@ -15,7 +15,7 @@
     if (optionsVisible && !select.contains(e.target)) optionsVisible = false;
   }
 
-  let selected = options.find(o => o.value === defaultValue) || {
+  $: selected = options.find(o => o.value === defaultValue) || {
     label: '-- не выбрано --',
   };
 
