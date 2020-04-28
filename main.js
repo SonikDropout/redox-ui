@@ -46,10 +46,10 @@ function initPeripherals(win) {
   serial
     .on('data', (d) => win.webContents.send('serialData', d))
     .once('data', (d) => (initialData = d));
-  ipcMain.on('startFileWrite', (_, ...args) => logger.createFile(...args));
+  ipcMain.on('startLog', (_, ...args) => logger.createFile(...args));
   ipcMain.on('logRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
-  ipcMain.on('saveFile', () => {
+  ipcMain.on('saveLog', () => {
     logger.saveFile(usbPath, (...args) =>
       win.webContents.send('fileSaved', ...args)
     );

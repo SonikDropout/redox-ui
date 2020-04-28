@@ -22,6 +22,7 @@ function createFile(name, headers) {
 }
 
 function writeRow(entries) {
+  if (!ws) return;
   for (let i = 0; i < entries.length; i++) {
     ws.cell(row, i + 1)
       .number(entries[i])

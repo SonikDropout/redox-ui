@@ -60,15 +60,15 @@
 
   function startDrawing() {
     isDrawing = true;
-    subscribeData();
     startLog();
     ipcRenderer.send('serialCommand', COMMANDS.start);
+    subscribeData();
   }
 
   function startLog() {
     const fileName = 'Redox';
     const headers = ['Время, с', 'Напряжение, В', 'Ток, А'];
-    ipcRenderer.send('startFileWrite', fileName, headers);
+    ipcRenderer.send('startLog', fileName, headers);
     saveDisabled = false;
   }
 
@@ -80,7 +80,7 @@
   }
 
   function subscribeData() {
-    timeStart = Date.now();
+    timeStart = 0;
     unsubscribeData = IVData.subscribe(addPoint);
   }
 
@@ -98,10 +98,6 @@
       }))
       .sort((p1, p2) => p1.x - p2.x);
     chart.update();
-  }
-
-  function sendToLogger(row) {
-    ipcRenderer.send('excelRow', row);
   }
 </script>
 
