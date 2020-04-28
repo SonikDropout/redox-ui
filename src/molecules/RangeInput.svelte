@@ -20,12 +20,16 @@
   function increment() {
     if (value + step <= max) {
       value = +(value + step).toPrecision(3);
+    } else {
+      clearTimers();
     }
   }
 
   function decrement() {
     if (value - step >= min) {
       value = +(value - step).toPrecision(3);
+    } else {
+      clearTimers();
     }
   }
 
@@ -35,6 +39,11 @@
       fn();
       interval = setInterval(fn, 50);
     }, 500);
+  }
+
+  function clearTimers() {
+    clearInterval(interval);
+    clearTimeout(timeout);
   }
 
   function pressIncrement(e) {
@@ -48,8 +57,7 @@
   }
 
   function release(e) {
-    if (timeout) clearTimeout(timeout);
-    if (interval) clearInterval(interval);
+    clearTimers();
     e.target.releasePointerCapture(e.pointerId);
     onChange(value, name);
   }
@@ -60,6 +68,7 @@
     disabled={value <= min || disabled}
     class="decrementer"
     on:pointerdown={pressDecrement}
+    on:pointercancel={release}
     on:pointerup={release}>
     <span>-</span>
   </button>
@@ -68,6 +77,7 @@
     disabled={value >= max || disabled}
     class="incrementer"
     on:pointerdown={pressIncrement}
+    on:pointercancel={release}
     on:pointerup={release}>
     <span>+</span>
   </button>

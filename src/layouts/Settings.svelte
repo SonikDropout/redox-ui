@@ -49,6 +49,8 @@
   }
   function setPumpPower(p) {
     pumpPower = p;
+    if ($stateData.pumpPower > 0)
+      ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(p));
   }
   function toggleMode(e) {
     isCharging = e.target.checked;
