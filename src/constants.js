@@ -22,8 +22,8 @@ const DATA_BYTE_LENGTH =
   STATE_DATA.length + IV_DATA.length * 2 + SEPARATORS.length;
 
 const COMMANDS = {
-  turnOnLighting: [4, 0],
-  turnOffLighting: [8, 0],
+  turnOffLighting: [4, 0],
+  turnOnLighting: [8, 0],
   start: [12, 0],
   stop: [16, 0],
   setPumpPower: (v) => [20, v],

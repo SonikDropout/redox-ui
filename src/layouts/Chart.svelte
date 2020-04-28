@@ -8,7 +8,7 @@
   import configureChart from './chart.config';
   import { onMount } from 'svelte';
   import { IVData, stateData, connectionType } from '../stores';
-  import { CONNECTION_TYPES } from '../constants';
+  import { CONNECTION_TYPES, COMMANDS } from '../constants';
 
   onMount(() => {
     chart = new Chart(
@@ -52,23 +52,30 @@
 
   function toggleDrawing() {
     if (isDrawing) {
-      unsubscribeData();
       stopDrawing();
     } else {
-      startLogging();
-      subscribeData();
+      startDrawing();
     }
-    isDrawing = !isDrawing;
   }
 
-  function startLogging() {
-    const fileName = '';
-    const headers = [];
-    saveDisabled = false;
+  function startDrawing() {
+    isDrawing = true;
+    subscribeData();
+    startLog();
+    ipcRenderer.send('serialCommand', COMMANDS.start);
+  }
+
+  function startLog() {
+    const fileName = 'Redox';
+    const headers = ['Время, с', 'Напряжение, В', 'Ток, А'];
     ipcRenderer.send('startFileWrite', fileName, headers);
+    saveDisabled = false;
   }
 
   function stopDrawing() {
+    isDrawing = false;
+    unsubscribeData();
+    ipcRenderer.send('serialCommand', COMMANDS.stop);
     points = [];
   }
 
@@ -79,6 +86,7 @@
 
   function addPoint(iv) {
     points.push([timeStart++, iv.voltage, iv.current]);
+    ipcRenderer.send('logRow', points[points.length - 1]);
     updateChart();
   }
 
