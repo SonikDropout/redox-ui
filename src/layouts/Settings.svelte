@@ -49,7 +49,6 @@
   }
   function setPumpPower(p) {
     pumpPower = p;
-    ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(p));
   }
   function toggleMode(e) {
     isCharging = e.target.checked;
@@ -113,7 +112,8 @@
     {/if}
   </main>
   <footer>
-    <Button on:click={() => window.scrollTo(0, window.innerHeight)}>
+    <Button
+      on:click={() => (document.body.style.transform = 'translateY(-100vh)')}>
       Построение графиков
     </Button>
   </footer>

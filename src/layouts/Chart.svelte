@@ -18,7 +18,6 @@
     chart.options.onClick = chart.resetZoom;
   });
 
-
   const xOptions = [
     { label: 'время', value: 0, symbol: 't, c' },
     { label: 'напряжение', value: 1, symbol: 'U, B' },
@@ -138,7 +137,7 @@
     </div>
   </main>
   <footer>
-    <Button on:click={() => window.scrollTo(0, 0)}>Назад</Button>
+    <Button on:click={() => (document.body.style.transform = '')}>Назад</Button>
     <SaveButton disabled={saveDisabled} />
   </footer>
 </div>

@@ -29,10 +29,6 @@ body {
   height: 100%;
 }
 
-body::-webkit-scrollbar {
-  display: none;
-}
-
 body {
   color: var(--text-color);
   margin: 0;
@@ -40,6 +36,8 @@ body {
     sans-serif;
   font-size: 1.6rem;
   user-select: none;
+  overflow: hidden;
+  transition: transform 0.3s;
 }
 
 header {
