@@ -4,8 +4,15 @@
   import RangeInput from '../molecules/RangeInput';
   import Toggle from '../atoms/Toggle';
   import Switch from '../atoms/Switch';
-  import { stateData, IVData, connectionType } from '../stores';
+  import {
+    stateData,
+    IVData,
+    connectionType,
+    storedEnergy,
+    storedCharge,
+  } from '../stores';
   import { COMMANDS, CONSTRAINTS } from '../constants';
+  import { getPowerFromFlow } from '../utils/others';
   import { ipcRenderer } from 'electron';
 
   const connectionTypeOptions = [
@@ -26,7 +33,7 @@
 
   let isCharging = $stateData.mode,
     loadMode = $stateData.loadMode,
-    pumpPower = $stateData.pumpPower;
+    pumpPower = Math.max($stateData.pumpPower, 4);
 
   function setConnectionType(type) {
     connectionType.set(+type);
@@ -47,10 +54,10 @@
       ipcRenderer.send('serialCommand', COMMANDS.turnOffLighting);
     }
   }
-  function setPumpPower(p) {
-    pumpPower = p;
+  function setPumpPower(flow) {
+    pumpPower = getPowerFromFlow(+flow);
     if ($stateData.pumpPower > 0)
-      ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(p));
+      ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(pumpPower));
   }
   function toggleMode(e) {
     isCharging = e.target.checked;
@@ -83,11 +90,15 @@
       on:change={toggleLight}
       checked={$stateData.lightingOn} />
     <div class="dbc-label right">
-      Мощность насосов
+      Подача насосов
       <br />
-      % от макс
+      мл/мин
     </div>
-    <RangeInput onChange={setPumpPower} style="grid-area: 2 / 10 / 4 / 12" />
+    <RangeInput
+      onChange={setPumpPower}
+      range={CONSTRAINTS.pumpFlow}
+      step={10}
+      style="grid-area: 2 / 10 / 4 / 12" />
     <div class="long-label right">Задание режима работы</div>
     <Switch
       style="grid-column: span 2"
@@ -112,6 +123,22 @@
         defaultValue={$IVData.setLoad}
         range={CONSTRAINTS[(loadMode === 1 ? 'current' : 'voltage') + ($connectionType === 1 ? 'Prallel' : 'Series')]} />
     {/if}
+    <div class="labeled-value" style="grid-column: 2 / 8">
+      <span class="label">Заряд, мА * с</span>
+      <strong class="value">{$storedCharge}</strong>
+    </div>
+    <div class="labeled-value" style="grid-column: 8 / 12">
+      <span class="label">Напряжение, В</span>
+      <strong class="value">{$IVData.voltage}</strong>
+    </div>
+    <div class="labeled-value" style="grid-column: 2 / 8">
+      <span class="label">Запасенная энергия, мВт * с</span>
+      <strong class="value">{$storedEnergy}</strong>
+    </div>
+    <div class="labeled-value" style="grid-column: 8 / 12">
+      <span class="label">Ток, А</span>
+      <strong class="value">{$IVData.current}</strong>
+    </div>
   </main>
   <footer>
     <Button
@@ -126,9 +153,9 @@
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-column-gap: 24px;
-    padding: 30px 24px 90px;
+    padding: 24px;
     align-items: center;
-    grid-template-rows: repeat(6, 1fr);
+    grid-template-rows: repeat(7, 1fr);
   }
   .label {
     grid-column: 1 / 5;
@@ -144,6 +171,11 @@
   .dbc-label {
     grid-area: 2 / 7 / 4 / 10;
     line-height: 1.5;
+  }
+  .labeled-value {
+    font-size: 2rem;
+    display: flex;
+    justify-content: space-between;
   }
   footer {
     justify-content: center;

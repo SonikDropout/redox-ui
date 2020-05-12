@@ -46,7 +46,7 @@ const getPercentage = (val, [min, max]) =>
 
 function debounce(fn, ms) {
   let timeout;
-  return function() {
+  return function () {
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => fn.apply(this, arguments), ms);
   };
@@ -61,5 +61,6 @@ module.exports = {
   randInt,
   mergeKeysValues,
   getPercentage,
-  debounce
+  debounce,
+  getPowerFromFlow: (n) => Math.round(0.0019 * n * n - 0.36 * n),
 };

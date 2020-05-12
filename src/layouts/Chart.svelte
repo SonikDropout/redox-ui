@@ -7,7 +7,7 @@
   import 'chartjs-plugin-zoom';
   import configureChart from './chart.config';
   import { onMount } from 'svelte';
-  import { IVData, stateData, connectionType } from '../stores';
+  import { IVData, stateData, connectionType, storedEnergy, storedCharge } from '../stores';
   import { CONNECTION_TYPES, COMMANDS } from '../constants';
 
   onMount(() => {
@@ -35,8 +35,6 @@
     xAxis = xOptions[0],
     yAxis = yOptions[0],
     chart,
-    storedCharge = 0,
-    storedEnergy = 0,
     timeStart;
 
   $: if (chart && xAxis) {
@@ -129,9 +127,9 @@
       {isDrawing ? 'Стоп' : 'Старт'}
     </Button>
     <div class="long-label">Заряд, мА * с</div>
-    <div class="value">{storedCharge}</div>
+    <div class="value">{$storedCharge}</div>
     <div class="long-label">Запасенная энергия, мВт * с</div>
-    <div class="value">{storedEnergy}</div>
+    <div class="value">{$storedEnergy}</div>
     <div class="chart">
       <canvas id="chart" height="400" width="520" />
     </div>

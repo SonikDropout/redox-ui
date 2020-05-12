@@ -37,6 +37,7 @@ const CONSTRAINTS = {
   voltageSeries: [0, 6.8],
   currentParallel: [0, 1.5],
   currentSeries: [0, 0.4],
+  pumpFlow: [200, 350],
 };
 
 CONNECTION_TYPES = ['Последовательное', 'Параллельное'];

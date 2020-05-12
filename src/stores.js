@@ -1,7 +1,7 @@
 const { writable, derived } = require('svelte/store');
 const { mergeKeysValues } = require('./utils/others');
 const { STATE_DATA, IV_DATA } = require('./constants');
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 
 const initialData = ipcRenderer.sendSync('initialDataRequest');
 
@@ -12,10 +12,15 @@ const connectionType = writable(0);
 ipcRenderer.on('serialData', (e, data) => {
   IVData.set(mergeKeysValues(IV_DATA, data.iv));
   stateData.set(mergeKeysValues(STATE_DATA, data.state));
-})
+});
+
+const storedCharge = writable(0),
+  storedEnergy = writable(0);
 
 module.exports = {
   IVData,
   stateData,
   connectionType,
+  storedEnergy,
+  storedCharge,
 };
