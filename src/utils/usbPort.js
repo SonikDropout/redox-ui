@@ -5,7 +5,7 @@ const { exec } = require('child_process');
 
 const usbPort = new EventEmitter();
 const winFindCmd = 'wmic logicaldisk where drivetype=2 get Name';
-const linuxFindCmd = 'lsblk --json -o name,path,rm --tree';
+const linuxFindCmd = 'lsblk --json -o name,path,rm,mountpoint --tree';
 let connectedDevice;
 
 const debouncedFindDrive = debounce(findDrive, 1000);
@@ -26,7 +26,7 @@ function winFindDrive() {
       return;
     }
     connectedDevice = output.split('\r\n')[1].slice(0, 2);
-    usbPort.emit('add', connectedDevice);
+    if (connectedDevice) usbPort.emit('add', connectedDevice);
   });
 }
 
@@ -44,20 +44,24 @@ function linuxFindSuitableDevice(drives) {
   const device = drives.find((dev) => dev.rm);
   if (!device) return;
   if (device.children) {
-    connectedDevice = device.children[0].path;
-    mountLinuxDevice(connectedDevice);
+    mountLinuxDevice(device.children[0]);
   } else {
-    connectedDevice = device.path;
-    mountLinuxDevice(connectedDevice);
+    mountLinuxDevice(device);
   }
 }
 
 function mountLinuxDevice(device) {
-  exec(`sudo mount ${device} /media/usb1 -o uid=1000`, (err) => {
+  if (device.mountpoint) {
+    connectedDevice = device.path;
+    usbPort.emit('add', device.mountpoint);
+    return;
+  }
+  exec(`sudo mount ${device.path} /media/usb1 -o uid=1000`, (err) => {
     if (err) {
       console.error(err);
       return;
     }
+    connectedDevice = device.path;
     usbPort.emit('add', '/media/usb1');
   });
 }
