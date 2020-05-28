@@ -62,5 +62,5 @@ module.exports = {
   mergeKeysValues,
   getPercentage,
   debounce,
-  getPowerFromFlow: (n) => Math.round(0.0019 * n * n - 0.36 * n),
+  getPowerFromFlow: (n) => constraint(Math.round(0.0019 * n * n - 0.36 * n), [0, 100]),
 };
