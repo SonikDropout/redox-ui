@@ -18,7 +18,7 @@
     showControls = false;
 
   function increment() {
-    if (value + step <= max) {
+    if (value + step - max < step * 0.1) {
       value = +(value + step).toPrecision(3);
     } else {
       clearTimers();
