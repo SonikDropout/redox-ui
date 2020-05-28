@@ -5,6 +5,7 @@
   import { ipcRenderer } from 'electron';
   import Chart from 'chart.js';
   import 'chartjs-plugin-zoom';
+  import 'chartjs-plugin-downsample';
   import configureChart from './chart.config';
   import { onMount } from 'svelte';
   import { IVData, stateData, connectionType, storedEnergy, storedCharge } from '../stores';

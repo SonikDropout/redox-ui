@@ -31,6 +31,9 @@
     { label: 'разрядка постояным напряжением', value: 2 },
   ];
 
+  const initialState = $stateData;
+  const initialIV = $IVData;
+
   let isCharging = $stateData.mode,
     loadMode = $stateData.loadMode,
     pumpPower = Math.max($stateData.pumpPower, 4);
@@ -83,12 +86,12 @@
       onChange={setConnectionType}
       defaultValue={$connectionType} />
     <div class="label right">Насосы</div>
-    <Toggle style="grid-column: 5 / 6" on:change={togglePump} />
+    <Toggle style="grid-column: 5 / 6" on:change={togglePump} checked={initialState.pumpPower > 0} />
     <div class="label right">Подсветка</div>
     <Toggle
       style="grid-column: 5 / 6"
       on:change={toggleLight}
-      checked={$stateData.lightingOn} />
+      checked={initialState.lightingOn} />
     <div class="dbc-label right">
       Подача насосов
       <br />
@@ -97,6 +100,7 @@
     <RangeInput
       onChange={setPumpPower}
       range={CONSTRAINTS.pumpFlow}
+      defaultValue={initialState.pumpPower}
       step={10}
       style="grid-area: 2 / 10 / 4 / 12" />
     <div class="long-label right">Задание режима работы</div>
@@ -105,10 +109,10 @@
       on:change={toggleMode}
       off="разрядка"
       on="зарядка"
-      checked={!!$stateData.mode} />
+      checked={!!initialState.mode} />
     <div class="long-label right">Характеристики режима работы</div>
     <Select
-      defaultValue={$stateData.loadMode}
+      defaultValue={initialState.loadMode}
       style="grid-column: span 5"
       options={isCharging ? chargingOptions : dischargingOptions}
       onChange={setLoadMode} />
@@ -120,8 +124,10 @@
         style="grid-column: 5 / 7"
         step={0.1}
         onChange={setLoad}
-        defaultValue={$IVData.setLoad}
-        range={CONSTRAINTS[(loadMode === 1 ? 'current' : 'voltage') + ($connectionType === 1 ? 'Prallel' : 'Series')]} />
+        defaultValue={initialIV.setLoad}
+        range={CONSTRAINTS[(loadMode === 1 ? 'current' : 'voltage') + ($connectionType === 1 ? 'Parallel' : 'Series')]} />
+    {:else}
+      <div class="spacer"></div>
     {/if}
     <div class="labeled-value" style="grid-column: 2 / 8">
       <span class="label">Заряд, мА * с</span>
@@ -153,9 +159,9 @@
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-column-gap: 24px;
-    padding: 24px;
+    padding: 24px;  
     align-items: center;
-    grid-template-rows: repeat(7, 1fr);
+    grid-template-rows: repeat(8, 1fr);
   }
   .label {
     grid-column: 1 / 5;
@@ -176,6 +182,9 @@
     font-size: 2rem;
     display: flex;
     justify-content: space-between;
+  }
+  .spacer {
+    grid-column: span 12;
   }
   footer {
     justify-content: center;
