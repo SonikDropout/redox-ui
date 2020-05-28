@@ -32,11 +32,13 @@
   ];
 
   const initialState = $stateData;
-  const initialIV = $IVData;
 
   let isCharging = $stateData.mode,
     loadMode = $stateData.loadMode,
+    load = $IVData.setLoad,
     pumpPower = Math.max($stateData.pumpPower, 4);
+
+  $: if (Math.abs(load - $IVData.setLoad) > 0.01) load = $IVData.setLoad;
 
   function setConnectionType(type) {
     connectionType.set(+type);
@@ -86,7 +88,10 @@
       onChange={setConnectionType}
       defaultValue={$connectionType} />
     <div class="label right">Насосы</div>
-    <Toggle style="grid-column: 5 / 6" on:change={togglePump} checked={initialState.pumpPower > 0} />
+    <Toggle
+      style="grid-column: 5 / 6"
+      on:change={togglePump}
+      checked={initialState.pumpPower > 0} />
     <div class="label right">Подсветка</div>
     <Toggle
       style="grid-column: 5 / 6"
@@ -109,7 +114,7 @@
       on:change={toggleMode}
       off="разрядка"
       on="зарядка"
-      checked={!!initialState.mode} />
+      checked={isCharging} />
     <div class="long-label right">Характеристики режима работы</div>
     <Select
       defaultValue={initialState.loadMode}
@@ -124,10 +129,10 @@
         style="grid-column: 5 / 7"
         step={0.1}
         onChange={setLoad}
-        defaultValue={initialIV.setLoad}
+        defaultValue={load}
         range={CONSTRAINTS[(loadMode === 1 ? 'current' : 'voltage') + ($connectionType === 1 ? 'Parallel' : 'Series')]} />
     {:else}
-      <div class="spacer"></div>
+      <div class="spacer" />
     {/if}
     <div class="labeled-value" style="grid-column: 2 / 8">
       <span class="label">Заряд, мА * с</span>
@@ -159,7 +164,7 @@
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-column-gap: 24px;
-    padding: 24px;  
+    padding: 24px;
     align-items: center;
     grid-template-rows: repeat(8, 1fr);
   }
