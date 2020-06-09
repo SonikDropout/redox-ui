@@ -8,13 +8,20 @@
   import 'chartjs-plugin-downsample';
   import configureChart from './chart.config';
   import { onMount } from 'svelte';
-  import { IVData, stateData, connectionType, storedEnergy, storedCharge } from '../stores';
+  import {
+    IVData,
+    stateData,
+    connectionType,
+    storedEnergy,
+    storedCharge,
+  } from '../stores';
   import { CONNECTION_TYPES, COMMANDS } from '../constants';
+  import pointsStorage from '../utils/pointsStorage';
 
   onMount(() => {
     chart = new Chart(
       document.getElementById('chart').getContext('2d'),
-      configureChart(points, { x: xAxis.symbol, y: yAxis.symbol })
+      configureChart(pointsStorage.points, { x: xAxis.symbol, y: yAxis.symbol })
     );
     chart.options.onClick = chart.resetZoom;
   });
@@ -29,8 +36,7 @@
     { label: 'напряжение', value: 1, symbol: 'U, B' },
   ];
 
-  let points = [],
-    saveDisabled = true,
+  let saveDisabled = true,
     isDrawing,
     unsubscribeData,
     xAxis = xOptions[0],
@@ -39,11 +45,13 @@
     timeStart;
 
   $: if (chart && xAxis) {
+    pointsStorage.setX(xAxis.value);
     chart.options.scales.xAxes[0].scaleLabel.labelString = xAxis.symbol;
     chart.update();
   }
 
   $: if (chart && yAxis) {
+    pointsStorage.setY(yAxis.value);
     chart.options.scales.yAxes[0].scaleLabel.labelString = yAxis.symbol;
     chart.update();
   }
@@ -58,6 +66,7 @@
 
   function startDrawing() {
     isDrawing = true;
+    pointsStorage.drain();
     startLog();
     ipcRenderer.send('serialCommand', COMMANDS.start);
     subscribeData();
@@ -74,7 +83,6 @@
     isDrawing = false;
     unsubscribeData();
     ipcRenderer.send('serialCommand', COMMANDS.stop);
-    points = [];
   }
 
   function subscribeData() {
@@ -83,18 +91,16 @@
   }
 
   function addPoint(iv) {
-    points.push([timeStart++, iv.voltage, iv.current]);
-    ipcRenderer.send('logRow', points[points.length - 1]);
+    pointsStorage.addRow([timeStart++, iv.voltage, iv.current]);
+    ipcRenderer.send(
+      'logRow',
+      pointsStorage.rows[pointsStorage.rows.length - 1]
+    );
     updateChart();
   }
 
   function updateChart() {
-    chart.data.datasets[0].data = points
-      .map(row => ({
-        x: row[xAxis.value],
-        y: row[yAxis.value],
-      }))
-      .sort((p1, p2) => p1.x - p2.x);
+    chart.data.datasets[0].data = pointsStorage.points;
     chart.update();
   }
 </script>
