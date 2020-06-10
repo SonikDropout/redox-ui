@@ -39,6 +39,7 @@
   let saveDisabled = true,
     isDrawing,
     unsubscribeData,
+    isCharging = $stateData.mode,
     xAxis = xOptions[0],
     yAxis = yOptions[0],
     chart,
@@ -87,6 +88,7 @@
 
   function subscribeData() {
     timeStart = 0;
+    isCharging = $stateData.mode;
     unsubscribeData = IVData.subscribe(addPoint);
   }
 
@@ -96,6 +98,8 @@
       'logRow',
       pointsStorage.rows[pointsStorage.rows.length - 1]
     );
+    storedCharge.update(charge => charge + iv.current * (isCharging ? 1 : -1))
+    storedEnergy.update(energy => energy + iv.current * iv.voltage * (isCharging ? 1 : -1))
     updateChart();
   }
 
