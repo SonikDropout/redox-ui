@@ -17,6 +17,7 @@
   $: precision = -Math.min(0, +step.toExponential().split('e')[1]);
 
   let timeout,
+    value = Math.min(Math.max(defaultValue, min), max),
     interval,
     showControls = false;
 
