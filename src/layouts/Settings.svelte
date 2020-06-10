@@ -38,8 +38,6 @@
     load = $IVData.setLoad,
     pumpPower = Math.max($stateData.pumpPower, 4);
 
-  $: if (Math.abs(load - $IVData.setLoad) > 0.01) load = $IVData.setLoad;
-
   function setConnectionType(type) {
     connectionType.set(+type);
   }

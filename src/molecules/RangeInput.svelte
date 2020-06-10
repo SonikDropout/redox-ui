@@ -47,11 +47,13 @@
   }
 
   function pressIncrement(e) {
+    if (e.target.disabled) return;
     stickyCall(increment);
     e.target.setPointerCapture(e.pointerId);
   }
 
   function pressDecrement(e) {
+    if (e.target.disabled) return;
     stickyCall(decrement);
     e.target.setPointerCapture(e.pointerId);
   }
