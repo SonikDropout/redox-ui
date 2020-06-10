@@ -133,16 +133,16 @@
       <div class="spacer" />
     {/if}
     <div class="labeled-value" style="grid-column: 2 / 8">
-      <span class="label">Заряд, мА * с</span>
-      <strong class="value">{$storedCharge}</strong>
+      <span class="label">Заряд, мА * ч</span>
+      <strong class="value">{$storedCharge | 0}</strong>
     </div>
     <div class="labeled-value" style="grid-column: 8 / 12">
       <span class="label">Напряжение, В</span>
       <strong class="value">{$IVData.voltage}</strong>
     </div>
     <div class="labeled-value" style="grid-column: 2 / 8">
-      <span class="label">Запасенная энергия, мВт * с</span>
-      <strong class="value">{$storedEnergy}</strong>
+      <span class="label">Запасенная энергия, мВт * ч</span>
+      <strong class="value">{$storedEnergy | 0}</strong>
     </div>
     <div class="labeled-value" style="grid-column: 8 / 12">
       <span class="label">Ток, А</span>
