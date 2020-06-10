@@ -49,7 +49,7 @@ function initPeripherals(win) {
   ipcMain.on('startLog', (_, ...args) => logger.createFile(...args));
   ipcMain.on('logRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
-  ipcMain.on('saveLog', (e) => {
+  ipcMain.on('saveFile', (e) => {
     logger.saveFile(usbPath, err => {
       if (err) e.reply('fileSaved', err);
       else setTimeout(() => e.reply('fileSaved'), 30000);
