@@ -49,10 +49,11 @@ function initPeripherals(win) {
   ipcMain.on('startLog', (_, ...args) => logger.createFile(...args));
   ipcMain.on('logRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
-  ipcMain.on('saveLog', () => {
-    logger.saveFile(usbPath, (...args) =>
-      win.webContents.send('fileSaved', ...args)
-    );
+  ipcMain.on('saveLog', (e) => {
+    logger.saveFile(usbPath, err => {
+      if (err) e.reply('fileSaved', err);
+      else setTimeout(() => e.reply('fileSaved'), 30000);
+    });
   });
   ipcMain.on('usbStorageRequest', usbPort.init);
   ipcMain.on('initialDataRequest', (e) => (e.returnValue = initialData));
