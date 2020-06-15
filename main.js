@@ -52,12 +52,12 @@ function initPeripherals(win) {
   ipcMain.on('saveFile', (e) => {
     logger.saveFile(usbPath, err => {
       if (err) e.reply('fileSaved', err);
-      else setTimeout(() => e.reply('fileSaved'), 30000);
+      else setTimeout(() => e.reply('fileSaved'), 50000);
     });
   });
   ipcMain.on('usbStorageRequest', usbPort.init);
   ipcMain.on('initialDataRequest', (e) => (e.returnValue = initialData));
-  ipcMain.on('EjectUSB', usbPort.eject);
+  ipcMain.on('ejectUSB', usbPort.eject);
   return {
     removeAllListeners() {
       usbPort.removeAllListeners();
