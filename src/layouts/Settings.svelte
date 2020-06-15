@@ -151,7 +151,7 @@
   </main>
   <footer>
     <Button
-      on:click={() => (document.body.style.transform = 'translateY(-100vh)')}>
+      on:click={() => (window.scrollTo({top: window.innerHeight}))}>
       Построение графиков
     </Button>
   </footer>

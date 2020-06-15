@@ -98,8 +98,12 @@
       'logRow',
       pointsStorage.rows[pointsStorage.rows.length - 1]
     );
-    storedCharge.update(charge => charge + iv.current * (isCharging ? 1 : -1) / 3.6)
-    storedEnergy.update(energy => energy + iv.current * iv.voltage * (isCharging ? 1 : -1) / 3.6)
+    storedCharge.update(
+      charge => charge + (iv.current * (isCharging ? 1 : -1)) / 3.6
+    );
+    storedEnergy.update(
+      energy => energy + (iv.current * iv.voltage * (isCharging ? 1 : -1)) / 3.6
+    );
     updateChart();
   }
 
@@ -146,7 +150,7 @@
     </div>
   </main>
   <footer>
-    <Button on:click={() => (document.body.style.transform = '')}>Назад</Button>
+    <Button on:click={() => window.scrollTo({ top: 0 })}>Назад</Button>
     <SaveButton disabled={saveDisabled} />
   </footer>
 </div>
