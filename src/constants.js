@@ -13,7 +13,7 @@ const STATES = {
   chart: 'chart',
 };
 
-const STATE_DATA = ['pumpPower', 'loadMode', 'ligtingOn', /*'mode'*/];
+const STATE_DATA = ['pumpPower', 'loadMode', 'ligtingOn', 'mode'];
 
 const IV_DATA = ['voltage', 'current', 'setLoad'];
 const IV_DIVIDERS = [1000, 1000, 10];
