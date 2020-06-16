@@ -65,13 +65,18 @@
   function toggleMode(e) {
     isCharging = e.target.checked;
     ipcRenderer.send('serialCommand', COMMANDS.setMode(Number(isCharging)));
+    setLoadMode(0);
+    setLoad(0);
   }
+
   function setLoadMode(m) {
     loadMode = +m;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(+m));
+    setLoad(0);
   }
 
   function setLoad(v) {
+    load = v;
     ipcRenderer.send('serialCommand', COMMANDS.setLoad(v));
   }
 </script>
@@ -115,7 +120,7 @@
       checked={isCharging} />
     <div class="long-label right">Характеристики режима работы</div>
     <Select
-      defaultValue={initialState.loadMode}
+      defaultValue={loadMode}
       style="grid-column: span 5"
       options={isCharging ? chargingOptions : dischargingOptions}
       onChange={setLoadMode} />
@@ -150,8 +155,7 @@
     </div>
   </main>
   <footer>
-    <Button
-      on:click={() => (window.scrollTo({top: window.innerHeight}))}>
+    <Button on:click={() => window.scrollTo({ top: window.innerHeight })}>
       Построение графиков
     </Button>
   </footer>
