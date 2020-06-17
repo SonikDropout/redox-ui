@@ -69,6 +69,7 @@
     isDrawing = true;
     pointsStorage.drain();
     startLog();
+    resetStored();
     ipcRenderer.send('serialCommand', COMMANDS.start);
     subscribeData();
   }
@@ -110,6 +111,11 @@
   function updateChart() {
     chart.data.datasets[0].data = pointsStorage.points;
     chart.update();
+  }
+  
+  function resetStored() {
+    storedCharge.set(0);
+    storedEnergy.set(0);
   }
 </script>
 
