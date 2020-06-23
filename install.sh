@@ -1,30 +1,16 @@
-passwd --delete pi
-
-# INSTALL REQUIRED PACKAGES
-apt install npm libudev-dev chromium-browser xorg
-
 # MAIN APP INSTALLATION
 npm i
 npm run build
 
 # MAIN APP AUTOSTART
-echo 'su -s /bin/bash -c startx pi&' > /etc/rc.local
-echo 'exit 0' > /etc/rc.local
-echo 'allowed_users=anybody' >> /etc/X11/Xwrapper.config
-echo '/opt/hydrogen-enrgy/HydrogenEnergy' > ~/.xinitrc
+sudo mkdir /usr/share/redox
+sudo cp -rf dist/linux-armv7l-unpacked/** /usr/share/redox/
+echo '/usr/share/redox/redox-ui' > ~/.xinitrc
 chmod +x ~/.xinitrc
 
 
 # BOOT SPEED OPTIMIZATIONS
 cat <<EOT >> /boot/config.txt
-max_usb_current=1
-hdmi_group=2
-hdmi_mode=87
-hdmi_cvt 1024 600 60 6 0 0 0
-hdmi_drive=1
-
-enable_uart=1
-
 # Disable the rainbow splash screen
 disable_splash=1
 

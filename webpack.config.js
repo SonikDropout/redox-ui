@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/renderer.js',
   output: {
     filename: 'renderer.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'static'),
   },
   resolve: {
     // see below for an explanation
@@ -48,6 +48,7 @@ module.exports = {
       callback();
     },
   ],
+  target: "electron-renderer",
   plugins: [
 		new MiniCssExtractPlugin({
 			filename: 'svelte.css'
