@@ -36,7 +36,7 @@ const CONSTRAINTS = {
   voltageParallel: [0, 1.7],
   voltageSeries: [0, 6.8],
   currentParallel: [0, 1.5],
-  currentSeries: [0, 0.4],
+  currentSeries: [0, 1.5],
   pumpFlow: [200, 350],
 };
 
