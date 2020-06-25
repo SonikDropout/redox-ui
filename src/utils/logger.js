@@ -13,6 +13,7 @@ function createFile(name, headers) {
   fileName = name + getFileDate() + '.xlsx';
   wb = new Workbook();
   ws = wb.addWorksheet('Результаты');
+  row = 1;
   if (!headerStyle) createStyles();
   for (let i = 0; i < headers.length; i++) {
     ws.cell(row, i + 1)
