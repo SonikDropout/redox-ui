@@ -24,6 +24,7 @@
   function handleClick() {
     disabled = true;
     isSaving = true;
+    saveMessage = '';
     ipcRenderer.send('saveFile');
     ipcRenderer.once('fileSaved', handleSaved);
   }
@@ -46,7 +47,7 @@
 </Button>
 {#if saveMessage}
   <div class="popup" transition:fly={{ y: -200 }}>
-    <span class="popup-close">&#x2573;</span>
+    <span on:click={closePopup} class="popup-close">&#x2573;</span>
     <p class:error={isSaveFailed}>{saveMessage}</p>
     <Button on:click={ejectUSB} size="sm">извлечь</Button>
   </div>
