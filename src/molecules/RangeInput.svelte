@@ -10,8 +10,15 @@
 
   $: min = range[0];
   $: max = range[1];
-  $: if (max < value) onChange(max, name);
-  $: value = Math.min(Math.max(defaultValue, min), max);
+  $: if (max < defaultValue) {
+    onChange(max, name);
+    defaultValue = max;
+  }
+  $: if (min > defaultValue) {
+    onChange(min, name);
+    defaultValue = min;
+  }
+  $: value = defaultValue;
   $: precision = -Math.min(0, +step.toExponential().split('e')[1]);
 
   let timeout,

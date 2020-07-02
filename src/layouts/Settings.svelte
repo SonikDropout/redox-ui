@@ -65,14 +65,11 @@
   function toggleMode(e) {
     isCharging = e.target.checked;
     ipcRenderer.send('serialCommand', COMMANDS.setMode(Number(isCharging)));
-    setLoadMode(0);
-    setLoad(0);
   }
 
   function setLoadMode(m) {
     loadMode = +m;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(+m));
-    setLoad(0);
   }
 
   function setLoad(v) {
