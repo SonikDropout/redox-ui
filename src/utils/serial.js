@@ -37,6 +37,8 @@ function sendCommand([byte1, byte2]) {
   }
 }
 
+let failedAttempts = 0;
+
 function writeCommandFromQueue() {
   if (!commandQueue.length) {
     portBusy = false;
@@ -47,9 +49,10 @@ function writeCommandFromQueue() {
   serial.write(cmd);
   serial.once('data', (buf) => {
     console.log('Recieved answer:', buf);
-    if (buf.toString('ascii') != 'ok') {
+    if (buf.toString('ascii') != 'ok' && failedAttempts < 2) {
       commandQueue.unshift(cmd);
-    }
+      failedAttempts++;
+    } else failedAttempts = 0;
     writeCommandFromQueue();
   });
 }
