@@ -9,6 +9,7 @@
     IVData,
     connectionType,
     storedEnergy,
+    mode,
     storedCharge,
   } from '../stores';
   import { COMMANDS, CONSTRAINTS } from '../constants';
@@ -63,7 +64,7 @@
       ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(pumpPower));
   }
   function toggleMode(e) {
-    isCharging = e.target.checked;
+    mode.set(e.target.checked);
     ipcRenderer.send('serialCommand', COMMANDS.setMode(Number(isCharging)));
   }
 
@@ -114,7 +115,7 @@
       on:change={toggleMode}
       off="разрядка"
       on="зарядка"
-      checked={isCharging} />
+      checked={$mode} />
     <div class="long-label right">Характеристики режима работы</div>
     <Select
       defaultValue={loadMode}

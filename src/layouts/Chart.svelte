@@ -10,6 +10,7 @@
   import { onMount } from 'svelte';
   import {
     IVData,
+    mode,
     stateData,
     connectionType,
     storedEnergy,
@@ -128,7 +129,7 @@
     <div class="label">Ток, А</div>
     <div class="long-value">{$IVData.current}</div>
     <div class="label">Режим работы</div>
-    <div class="long-value">{$stateData.mode ? 'Зарядка' : 'Разрядка'}</div>
+    <div class="long-value">{$mode ? 'Зарядка' : 'Разрядка'}</div>
     <div class="label">Тип соединения МЭБ</div>
     <div class="long-value">{CONNECTION_TYPES[$connectionType]}</div>
     <div class="short-label">Ось х</div>

@@ -17,10 +17,13 @@ ipcRenderer.on('serialData', (e, data) => {
 const storedCharge = writable(0),
   storedEnergy = writable(0);
 
+const mode = writable(0);
+
 module.exports = {
   IVData,
   stateData,
   connectionType,
   storedEnergy,
   storedCharge,
+  mode,
 };
