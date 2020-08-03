@@ -64,8 +64,8 @@
       ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(pumpPower));
   }
   function toggleMode(e) {
-    mode.set(e.target.checked);
-    ipcRenderer.send('serialCommand', COMMANDS.setMode(Number(isCharging)));
+    mode.set(Number(e.target.checked));
+    ipcRenderer.send('serialCommand', COMMANDS.setMode($mode));
   }
 
   function setLoadMode(m) {
