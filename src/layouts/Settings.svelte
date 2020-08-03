@@ -34,8 +34,7 @@
 
   const initialState = $stateData;
 
-  let isCharging = $stateData.mode,
-    loadMode = $stateData.loadMode,
+  let loadMode = $stateData.loadMode,
     load = $IVData.setLoad,
     pumpPower = Math.max($stateData.pumpPower, 4);
 
