@@ -66,6 +66,7 @@
   function toggleMode(e) {
     mode.set(Number(e.target.checked));
     ipcRenderer.send('serialCommand', COMMANDS.setMode($mode));
+    setLoad(0);
   }
 
   function setLoadMode(m) {
@@ -120,7 +121,7 @@
     <Select
       defaultValue={loadMode}
       style="grid-column: span 5"
-      options={isCharging ? chargingOptions : dischargingOptions}
+      options={$mode ? chargingOptions : dischargingOptions}
       onChange={setLoadMode} />
     {#if loadMode}
       <div class="label right">
