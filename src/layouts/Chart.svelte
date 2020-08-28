@@ -2,6 +2,9 @@
   import Select from '../molecules/Select';
   import Button from '../atoms/Button';
   import SaveButton from '../organisms/SaveButton';
+  import Switch from '../atoms/Switch';
+  import Toggle from '../atoms/Toggle';
+  import RangeInput from '../molecules/RangeInput';
   import { ipcRenderer } from 'electron';
   import Chart from 'chart.js';
   import 'chartjs-plugin-zoom';
@@ -16,7 +19,7 @@
     storedEnergy,
     storedCharge,
   } from '../stores';
-  import { CONNECTION_TYPES, COMMANDS } from '../constants';
+  import { CONNECTION_TYPES, COMMANDS, CONSTRAINTS } from '../constants';
   import pointsStorage from '../utils/pointsStorage';
 
   onMount(() => {
@@ -37,6 +40,11 @@
     { label: 'напряжение', value: 1, symbol: 'U, B' },
   ];
 
+  const chargingOptions = [
+    { label: 'постоянным током', value: 1 },
+    { label: 'постоянным напряжением', value: 2 },
+  ];
+
   let saveDisabled = true,
     isDrawing,
     unsubscribeData,
@@ -44,6 +52,9 @@
     xAxis = xOptions[0],
     yAxis = yOptions[0],
     chart,
+    load,
+    pumpPower = $stateData.pumpPower,
+    chargeMode,
     timeStart;
 
   $: if (chart && xAxis) {
@@ -113,27 +124,91 @@
     chart.data.datasets[0].data = pointsStorage.points;
     chart.update();
   }
-  
+
   function resetStored() {
     storedCharge.set(0);
     storedEnergy.set(0);
   }
+
+  function toggleMode(e) {
+    ipcRenderer.send('serialCommand', COMMANDS.setMode(+e.target.checked));
+    chargeMode = $stateData.loadMode;
+  }
+
+  function setChargeMode(mode) {
+    chargeMode = +mode;
+    ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(chargeMode));
+  }
+
+  function setChargeLoad(l) {
+    load = l
+    ipcRenderer.send('serialCommand', COMMANDS.setLoad(load));
+  }
+
+  function setPumpPower(power) {
+    pumpPower = power;
+  }
+
+  function togglePump(e) {
+    ipcRenderer.send(
+      'serialCommand',
+      COMMANDS.setPumpPower(e.target.checked ? pumpPower : 0)
+    );
+  }
 </script>
 
 <div class="layout">
-  <header>Построение графиков</header>
+  <header>Управление редокс батареей</header>
   <main>
-    <h3>Характеристики редокс батареи</h3>
-    <div class="label">Напряжение, В</div>
-    <div class="long-value">{$IVData.voltage}</div>
-    <div class="label">Ток, А</div>
-    <div class="long-value">{$IVData.current}</div>
+    <div class="label">Насосы</div>
+    <div class="user-input">
+      <Toggle style="grid-column: 5 / 6" on:change={togglePump} />
+    </div>
+    <div class="label">
+      Мощность насосов, %
+    </div>
+    <div class="user-input">
+      <RangeInput
+        onChange={setPumpPower}
+        range={CONSTRAINTS.pumpPower}
+        defaultValue={pumpPower} />
+    </div>
+
     <div class="label">Режим работы</div>
-    <div class="long-value">{$mode ? 'Зарядка' : 'Разрядка'}</div>
-    <div class="label">Тип соединения МЭБ</div>
-    <div class="long-value">{CONNECTION_TYPES[$connectionType]}</div>
+    <div class="user-input">
+      <Switch
+        style="grid-column: span 2"
+        on:change={toggleMode}
+        off="разрядка"
+        on="зарядка" />
+    </div>
+    {#if chargeMode}
+      <div class="label">Режим зарядки:</div>
+      <div class="user-input">
+        <Select
+          defaultValue={chargeMode}
+          style="grid-column: span 5"
+          options={chargingOptions}
+          onChange={setChargeMode} />
+      </div>
+      <div class="label">
+        Значение {chargeMode === 1 ? 'тока, А' : 'напряжения, В'}
+      </div>
+      <div class="user-input">
+        <RangeInput
+          style="grid-column: 5 / 7"
+          step={0.1}
+          onChange={setChargeLoad}
+          defaultValue={load}
+          range={CONSTRAINTS[(chargeMode === 1 ? 'current' : 'voltage')]} />
+      </div>
+    {:else}
+      <div class="spacer" />
+      <div class="spacer" />
+    {/if}
     <div class="short-label">Ось х</div>
     <Select
+      order={1}
       options={xOptions}
       defaultValue={xAxis.value}
       style="grid-column: 2 / 4"
@@ -145,19 +220,19 @@
       defaultValue={yAxis.value}
       style="grid-column: 2 / 4"
       onChange={i => (yAxis = yOptions[+i % 2])} />
-    <Button style="grid-area: 6 / 4 / 8 / 6" on:click={toggleDrawing}>
-      {isDrawing ? 'Стоп' : 'Старт'}
-    </Button>
-    <div class="long-label">Заряд, мА * ч</div>
-    <div class="value">{$storedCharge | 0}</div>
-    <div class="long-label">Запасенная энергия, мВт * ч</div>
-    <div class="value">{$storedEnergy | 0}</div>
+
+    <div class="label">Напряжение, В</div>
+    <div class="value">{$IVData.voltage}</div>
+    <div class="label">Ток, А</div>
+    <div class="value">{$IVData.current}</div>
     <div class="chart">
       <canvas id="chart" height="400" width="520" />
     </div>
   </main>
   <footer>
-    <Button on:click={() => window.scrollTo({ top: 0 })}>Назад</Button>
+    <Button style="grid-area: 6 / 4 / 8 / 6" on:click={toggleDrawing}>
+      {isDrawing ? 'Стоп' : 'Старт'}
+    </Button>
     <SaveButton disabled={saveDisabled} />
   </footer>
 </div>
@@ -172,9 +247,6 @@
     align-items: center;
     padding: 0 24px;
   }
-  h3 {
-    grid-column: 1 / 6;
-  }
   .chart {
     grid-area: 1 / 6 / 11 / 13;
   }
@@ -182,23 +254,22 @@
     justify-content: space-between;
     padding: 0 24px;
   }
+  .user-input {
+    grid-column: 3 / 6;
+  }
+  .spacer {
+    grid-column: 1 / 6;
+  }
   .label {
-    grid-column: 1 / 4;
+    grid-column: 1 / 3;
   }
   .short-label {
     grid-column: 1 / 2;
   }
-  .long-label {
-    grid-column: 1 / 5;
-  }
   .value {
-    grid-column: 5 / 6;
-  }
-  .long-value {
     grid-column: 4 / 6;
   }
-  .value,
-  .long-value {
+  .value {
     font-family: 'Oswald';
   }
 </style>

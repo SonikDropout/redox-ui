@@ -13,7 +13,7 @@ const STATES = {
   chart: 'chart',
 };
 
-const STATE_DATA = ['pumpPower', 'loadMode', 'ligtingOn', 'mode'];
+const STATE_DATA = ['pumpPower', 'loadMode', 'mode'];
 
 const IV_DATA = ['voltage', 'current', 'setLoad'];
 const IV_DIVIDERS = [1000, 1000, 10];
@@ -22,8 +22,6 @@ const DATA_BYTE_LENGTH =
   STATE_DATA.length + IV_DATA.length * 2 + SEPARATORS.length;
 
 const COMMANDS = {
-  turnOffLighting: [4, 0],
-  turnOnLighting: [8, 0],
   start: [12, 0],
   stop: [16, 0],
   setPumpPower: (v) => [20, v],
@@ -33,11 +31,9 @@ const COMMANDS = {
 };
 
 const CONSTRAINTS = {
-  voltageParallel: [0, 1.7],
-  voltageSeries: [0, 6.8],
-  currentParallel: [0, 1.5],
-  currentSeries: [0, 1.5],
-  pumpFlow: [200, 350],
+  voltage: [0, 8],
+  current: [0, 1.5],
+  pumpPower: [0,100],
 };
 
 CONNECTION_TYPES = ['Последовательное', 'Параллельное'];

@@ -5,6 +5,8 @@ const serial = new EventEmitter();
 const state = Array(STATE_DATA.length).fill(0);
 const iv = Array(IV_DATA.length).fill(0);
 iv[2] = 3.4;
+state[1] = 1;
+state[2] = 1;
 
 let interval = setInterval(sendData, 1000);
 
