@@ -53,6 +53,7 @@
     yAxis = yOptions[0],
     chart,
     load,
+    pumpOn,
     pumpPower = $stateData.pumpPower,
     chargeMode,
     timeStart;
@@ -141,15 +142,19 @@
   }
 
   function setChargeLoad(l) {
-    load = l
+    load = l;
     ipcRenderer.send('serialCommand', COMMANDS.setLoad(load));
   }
 
   function setPumpPower(power) {
     pumpPower = power;
+    if (pumpOn) {
+      ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(power));
+    }
   }
 
   function togglePump(e) {
+    pumpOn = !pumpOn;
     ipcRenderer.send(
       'serialCommand',
       COMMANDS.setPumpPower(e.target.checked ? pumpPower : 0)
@@ -164,9 +169,7 @@
     <div class="user-input">
       <Toggle style="grid-column: 5 / 6" on:change={togglePump} />
     </div>
-    <div class="label">
-      Мощность насосов, %
-    </div>
+    <div class="label">Мощность насосов, %</div>
     <div class="user-input">
       <RangeInput
         onChange={setPumpPower}
@@ -200,7 +203,7 @@
           step={0.1}
           onChange={setChargeLoad}
           defaultValue={load}
-          range={CONSTRAINTS[(chargeMode === 1 ? 'current' : 'voltage')]} />
+          range={CONSTRAINTS[chargeMode === 1 ? 'current' : 'voltage']} />
       </div>
     {:else}
       <div class="spacer" />
