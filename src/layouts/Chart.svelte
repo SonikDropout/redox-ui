@@ -41,8 +41,14 @@
   ];
 
   const chargingOptions = [
-    { label: 'постоянным током', value: 1 },
-    { label: 'постоянным напряжением', value: 2 },
+    { label: 'постояным током', value: 1 },
+    { label: 'постояным напряжением', value: 2 },
+  ];
+
+  const dischargingOptions = [
+    { label: 'на внеш. нагрузке', value: 0 },
+    { label: 'постояным током', value: 1 },
+    { label: 'постояным напряжением', value: 2 },
   ];
 
   let saveDisabled = true,
@@ -55,7 +61,7 @@
     load,
     pumpOn,
     pumpPower = $stateData.pumpPower,
-    chargeMode,
+    loadMode = $stateData.loadMode,
     timeStart;
 
   $: if (chart && xAxis) {
@@ -132,13 +138,14 @@
   }
 
   function toggleMode(e) {
-    ipcRenderer.send('serialCommand', COMMANDS.setMode(+e.target.checked));
-    chargeMode = $stateData.loadMode;
+    isCharging = e.target.checked
+    ipcRenderer.send('serialCommand', COMMANDS.setMode(+isCharging));
+    if (isCharging && !loadMode) setChargeMode(1)
   }
 
   function setChargeMode(mode) {
-    chargeMode = +mode;
-    ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(chargeMode));
+    loadMode = +mode;
+    ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(loadMode));
   }
 
   function setChargeLoad(l) {
@@ -185,17 +192,17 @@
         off="разрядка"
         on="зарядка" />
     </div>
-    {#if chargeMode}
-      <div class="label">Режим зарядки:</div>
-      <div class="user-input">
-        <Select
-          defaultValue={chargeMode}
-          style="grid-column: span 5"
-          options={chargingOptions}
-          onChange={setChargeMode} />
-      </div>
+    <div class="label">Режим {isCharging ? 'зарядки' : 'разрядки'}:</div>
+    <div class="user-input">
+      <Select
+        defaultValue={loadMode}
+        style="grid-column: span 5"
+        options={isCharging ? chargingOptions : dischargingOptions}
+        onChange={setChargeMode} />
+    </div>
+    {#if loadMode}
       <div class="label">
-        Значение {chargeMode === 1 ? 'тока, А' : 'напряжения, В'}
+        Значение {loadMode === 1 ? 'тока, А' : 'напряжения, В'}
       </div>
       <div class="user-input">
         <RangeInput
@@ -203,10 +210,9 @@
           step={0.1}
           onChange={setChargeLoad}
           defaultValue={load}
-          range={CONSTRAINTS[chargeMode === 1 ? 'current' : 'voltage']} />
+          range={CONSTRAINTS[loadMode === 1 ? 'current' : 'voltage']} />
       </div>
     {:else}
-      <div class="spacer" />
       <div class="spacer" />
     {/if}
     <div class="short-label">Ось х</div>

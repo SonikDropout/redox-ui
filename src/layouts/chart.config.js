@@ -32,7 +32,7 @@ module.exports = function config(points, axesLabels) {
               labelString: axesLabels.x,
             },
             ticks: {
-              maxTickLimit: 8,
+              suggestedMax: 10,
             },
           },
         ],
@@ -44,9 +44,7 @@ module.exports = function config(points, axesLabels) {
               display: true,
               labelString: axesLabels.y,
             },
-            ticks: {
-              maxTickLimit: 8,
-            },
+            ticks: {},
           },
         ],
       },
