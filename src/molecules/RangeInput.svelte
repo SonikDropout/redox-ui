@@ -34,7 +34,7 @@
   }
 
   function decrement() {
-    if (value - step >= min) {
+    if (value - step - min > -step * 0.1) {
       value = +(value - step).toPrecision(3);
     } else {
       clearTimers();
