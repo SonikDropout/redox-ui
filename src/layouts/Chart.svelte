@@ -62,6 +62,11 @@
     pumpOn,
     pumpPower = $stateData.pumpPower,
     loadMode = $stateData.loadMode,
+    loadConstraint =
+      CONSTRAINTS[
+        (loadMode === 1 ? 'current' : 'voltage') +
+          (isCharging ? 'Charge' : 'Discharge')
+      ],
     timeStart;
 
   $: if (!$stateData.mode && $IVData.voltage < 4) startCharging();
@@ -81,7 +86,7 @@
   function startCharging() {
     toggleMode({ target: { checked: true } });
     setChargeMode(2);
-    setChargeLoad(5);
+    setChargeLoad(6);
   }
 
   function toggleDrawing() {
@@ -149,11 +154,13 @@
     isCharging = e.target.checked;
     ipcRenderer.send('serialCommand', COMMANDS.setMode(+isCharging));
     if (isCharging && !loadMode) setChargeMode(1);
+    resetLoadConstraint();
   }
 
   function setChargeMode(mode) {
     loadMode = +mode;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(loadMode));
+    resetLoadConstraint();
   }
 
   function setChargeLoad(l) {
@@ -175,6 +182,14 @@
       COMMANDS.setPumpPower(e.target.checked ? pumpPower : 0)
     );
   }
+
+  function resetLoadConstraint() {
+    loadConstraint =
+      CONSTRAINTS[
+        (loadMode === 1 ? 'current' : 'voltage') +
+          (isCharging ? 'Charge' : 'Discharge')
+      ];
+  }
 </script>
 
 <div class="layout">
@@ -195,7 +210,7 @@
     <div class="label">Режим работы</div>
     <div class="user-input">
       <Switch
-       checked={isCharging}
+        checked={isCharging}
         style="grid-column: span 2"
         on:change={toggleMode}
         off="разрядка"
@@ -219,7 +234,7 @@
           step={0.1}
           onChange={setChargeLoad}
           defaultValue={load}
-          range={CONSTRAINTS[loadMode === 1 ? 'current' : 'voltage']} />
+          range={loadConstraint} />
       </div>
     {:else}
       <div class="spacer" />

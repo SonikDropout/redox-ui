@@ -31,8 +31,10 @@ const COMMANDS = {
 };
 
 const CONSTRAINTS = {
-  voltage: [0, 8],
-  current: [0, 1.5],
+  voltageCharge: [6, 8],
+  currentCharge: [0, 1.5],
+  voltageDischarge: [4, 8],
+  currentDischarge: [0, 1.5],
   pumpPower: [0,100],
 };
 
