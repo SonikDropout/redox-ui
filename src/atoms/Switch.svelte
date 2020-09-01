@@ -3,7 +3,7 @@
   export let off;
   export let name;
   export let style;
-  let checked;
+  export let checked;
 </script>
 
 <label {style}>

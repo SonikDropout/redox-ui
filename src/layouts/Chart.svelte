@@ -64,6 +64,8 @@
     loadMode = $stateData.loadMode,
     timeStart;
 
+  $: if (!$stateData.mode && $IVData.voltage < 4) startCharging();
+
   $: if (chart && xAxis) {
     pointsStorage.setX(xAxis.value);
     chart.options.scales.xAxes[0].scaleLabel.labelString = xAxis.symbol;
@@ -74,6 +76,12 @@
     pointsStorage.setY(yAxis.value);
     chart.options.scales.yAxes[0].scaleLabel.labelString = yAxis.symbol;
     chart.update();
+  }
+
+  function startCharging() {
+    toggleMode({ target: { checked: true } });
+    setChargeMode(2);
+    setChargeLoad(5);
   }
 
   function toggleDrawing() {
@@ -138,9 +146,9 @@
   }
 
   function toggleMode(e) {
-    isCharging = e.target.checked
+    isCharging = e.target.checked;
     ipcRenderer.send('serialCommand', COMMANDS.setMode(+isCharging));
-    if (isCharging && !loadMode) setChargeMode(1)
+    if (isCharging && !loadMode) setChargeMode(1);
   }
 
   function setChargeMode(mode) {
@@ -187,6 +195,7 @@
     <div class="label">Режим работы</div>
     <div class="user-input">
       <Switch
+       checked={isCharging}
         style="grid-column: span 2"
         on:change={toggleMode}
         off="разрядка"
