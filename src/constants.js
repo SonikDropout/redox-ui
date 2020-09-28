@@ -13,19 +13,32 @@ const STATES = {
   chart: 'chart',
 };
 
-const STATE_DATA = ['pumpPower', 'loadMode', 'mode'];
+const STATE_DATA = [
+  'mode',
+  'loadMode',
+  'cellDcDcOnOff',
+  'cellBusOnOff',
+  'cellLoadOnOff',
+  'batteryLoadOnOff',
+  'batteryBusOnOff',
+  'PSUOnOff',
+  'pumpOnOff',
+];
 
-const IV_DATA = ['voltage', 'current', 'setLoad'];
-const IV_DIVIDERS = [1000, 1000, 10];
+const IV_DATA = ['cellVoltage', 'cellCurrent', 'setLoad', 'batVoltage', 'batCurrent', 'busVoltage'];
+const IV_DIVIDERS = [1000, 1000, 10, 1000, 1000, 1000];
 
 const DATA_BYTE_LENGTH =
   STATE_DATA.length + IV_DATA.length * 2 + SEPARATORS.length;
 
 const COMMANDS = {
-  start: [12, 0],
-  stop: [16, 0],
-  setPumpPower: (v) => [20, v],
-  setMode: (v) => [24, v],
+  cellLoadSwitch: (v) => [4, v],
+  batteryLoadSwitch: (v) => [8, v],
+  cellDcDcSwitch: (v) => [12, v],
+  cellBusSwitch: (v) => [16, v],
+  batteryBusSwitch: (v) => [20, v],
+  PSUSwitch: (v) => [24, v],
+  pumpSwitch: (v) => [28, v],
   setLoadMode: (v) => [28, v],
   setLoad: (v) => [32, v * 10],
 };
@@ -35,10 +48,8 @@ const CONSTRAINTS = {
   currentCharge: [0, 1.5],
   voltageDischarge: [4, 8],
   currentDischarge: [0, 1.5],
-  pumpPower: [0,100],
+  pumpPower: [0, 100],
 };
-
-CONNECTION_TYPES = ['Последовательное', 'Параллельное'];
 
 module.exports = {
   IS_RPI,
@@ -50,6 +61,5 @@ module.exports = {
   STATE_DATA,
   DATA_BYTE_LENGTH,
   CONSTRAINTS,
-  CONNECTION_TYPES,
   IV_DIVIDERS,
 };

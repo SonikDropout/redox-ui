@@ -19,7 +19,7 @@
     storedEnergy,
     storedCharge,
   } from '../stores';
-  import { CONNECTION_TYPES, COMMANDS, CONSTRAINTS } from '../constants';
+  import { COMMANDS, CONSTRAINTS } from '../constants';
   import pointsStorage from '../utils/pointsStorage';
 
   onMount(() => {

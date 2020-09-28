@@ -32,12 +32,26 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [prod ? MiniCssExtractPlugin.loader : 'style-loader', 'css-loader'],
+        use: [
+          prod ? MiniCssExtractPlugin.loader : 'style-loader',
+          'css-loader',
+        ],
+      },
+      {
+        test: /\.(svg|jpg|png)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+            },
+          },
+        ],
       },
     ],
   },
   externals: [
-    function(context, request, callback) {
+    function (context, request, callback) {
       if (
         /^path|fs|events|serialport|electron|drivelist|excel4node|usb-detection$/.test(
           request
@@ -48,11 +62,11 @@ module.exports = {
       callback();
     },
   ],
-  target: "electron-renderer",
+  target: 'electron-renderer',
   plugins: [
-		new MiniCssExtractPlugin({
-			filename: 'svelte.css'
-		})
-	],
+    new MiniCssExtractPlugin({
+      filename: 'svelte.css',
+    }),
+  ],
   mode,
 };

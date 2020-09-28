@@ -6,7 +6,7 @@
   --corporate-emerald: #37abb8;
   --corporate-emerald-darken: #1c5b57;
   --corporate-light-green: #8bc041;
-  --corporate-blue-darken: #065b8c;
+  --corporate-blue-darken: #4d585f;
   --danger-color: #dc3545;
   --corporate-grey: #969ba5;
   --corporate-grey-darken: #74787f;
@@ -43,8 +43,8 @@ body {
 header {
   font-size: 3.2rem;
   text-align: center;
-  height: 8rem;
-  line-height: 8rem;
+  height: 6rem;
+  line-height: 6rem;
   font-family: 'Oswald', sans-serif;
 }
 
@@ -62,10 +62,7 @@ header {
 }
 
 .layout footer {
-  height: 8rem;
-  line-height: 8rem;
-  display: flex;
-  align-items: center;
+  height: 6rem;
 }
 
 h1,
