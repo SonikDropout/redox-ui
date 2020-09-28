@@ -1,12 +1,9 @@
-sudo apt-get install -y libudev-dev &&
+#!/bin/bash
+set -e
 # MAIN APP INSTALLATION
-npm i &&
-npm run build &&
+npm i
+npm run build
 
 # MAIN APP AUTOSTART
-sudo mkdir /usr/share/redox &&
-sudo cp -rf dist/linux-armv7l-unpacked/** /usr/share/redox/ &&
-echo '/usr/share/redox/redox-ui' > ~/.xinitrc &&
-chmod +x ~/.xinitrc &&
-
-while read p; do sudo systemctl disable "$p"; done < unused-packages.list
+echo '/home/pi/redox-ui/dist/linux-arm7l-unpacked/redox-ui' > ~/.xinitrc
+chmod +x ~/.xinitrc
