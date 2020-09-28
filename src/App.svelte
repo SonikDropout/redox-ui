@@ -3,6 +3,8 @@
   import Chart from './layouts/Chart';
   import Version from './atoms/Version';
   import UpdateModal from './organisms/UpdateModal';
+  import {ipcRenderer} from 'electron';
+  
   let updateAvailable = ipcRenderer.sendSync('checkUpdate');
 
   ipcRenderer.on('updateAvailable', () => (updateAvailable = true));
