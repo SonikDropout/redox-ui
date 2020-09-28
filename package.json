@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "GUI redox stand",
   "main": "main.js",
+  "repository": {
+    "url": "https://gihub.com/SonikDropout/redox-ui"
+  },
   "scripts": {
     "wp-watch": "cross-env NODE_ENV=development webpack --watch",
     "wp-build": "cross-env NODE_ENV=production webpack",

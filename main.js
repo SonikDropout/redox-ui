@@ -5,6 +5,7 @@ const logger = require('./src/utils/logger');
 const usbPort = require('./src/utils/usbPort');
 const { IS_RPI: isPi } = require('./src/constants');
 const { app, BrowserWindow, ipcMain } = electron;
+const checkUpdate = require('./src/utils/updater');
 
 let win,
   usbPath,
@@ -58,6 +59,7 @@ function initPeripherals(win) {
   ipcMain.on('usbStorageRequest', usbPort.init);
   ipcMain.on('initialDataRequest', (e) => (e.returnValue = initialData));
   ipcMain.on('ejectUSB', usbPort.eject);
+  initUpdater();
   return {
     removeAllListeners() {
       usbPort.removeAllListeners();
@@ -65,6 +67,15 @@ function initPeripherals(win) {
     },
   };
 }
+
+function initUpdater() {
+  checkUpdate().then((isUpdatable) => {
+    if (isUpdatable) win.webContents.send('updateAvailable');
+    updateAvailable = isUpdatable;
+  });
+  ipcMain.on('checkUpdate', (e) => (e.returnValue = updateAvailable));
+}
+
 
 function launch() {
   const screenArea = electron.screen.getPrimaryDisplay().workAreaSize;
