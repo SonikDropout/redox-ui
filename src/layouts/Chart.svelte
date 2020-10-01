@@ -225,9 +225,9 @@
       onChange={i => (yAxis = yOptions[+i % 2])} />
 
     <div class="label">Напряжение, В</div>
-    <div class="value">{$IVData.voltage}</div>
+    <div class="value">{$IVData.cellVoltage}</div>
     <div class="label">Ток, А</div>
-    <div class="value">{$IVData.current}</div>
+    <div class="value">{$IVData.cellCurrent}</div>
     <div class="chart">
       <canvas id="chart" height="380" width="520" />
     </div>
