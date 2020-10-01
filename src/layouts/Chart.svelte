@@ -59,8 +59,6 @@
     yAxis = yOptions[0],
     chart,
     load,
-    pumpOn,
-    pumpPower = $stateData.pumpPower,
     loadMode = $stateData.loadMode,
     loadConstraint =
       CONSTRAINTS[
@@ -152,7 +150,7 @@
 
   function toggleMode(e) {
     isCharging = e.target.checked;
-    ipcRenderer.send('serialCommand', COMMANDS.setMode(+isCharging));
+    ipcRenderer.send('serialCommand', COMMANDS.cellChargeMode(+isCharging));
     if (isCharging && !loadMode) setChargeMode(1);
     resetLoadConstraint();
   }
@@ -168,21 +166,6 @@
     ipcRenderer.send('serialCommand', COMMANDS.setLoad(load));
   }
 
-  function setPumpPower(power) {
-    pumpPower = power;
-    if (pumpOn) {
-      ipcRenderer.send('serialCommand', COMMANDS.setPumpPower(power));
-    }
-  }
-
-  function togglePump(e) {
-    pumpOn = !pumpOn;
-    ipcRenderer.send(
-      'serialCommand',
-      COMMANDS.setPumpPower(e.target.checked ? pumpPower : 0)
-    );
-  }
-
   function resetLoadConstraint() {
     loadConstraint =
       CONSTRAINTS[
@@ -193,20 +176,8 @@
 </script>
 
 <div class="layout">
-  <header>Управление редокс батареей</header>
+  <header>Задание рабочих параметров ячейки</header>
   <main>
-    <div class="label">Насосы</div>
-    <div class="user-input">
-      <Toggle style="grid-column: 5 / 6" on:change={togglePump} />
-    </div>
-    <div class="label">Мощность насосов, %</div>
-    <div class="user-input">
-      <RangeInput
-        onChange={setPumpPower}
-        range={CONSTRAINTS.pumpPower}
-        defaultValue={pumpPower} />
-    </div>
-
     <div class="label">Режим работы</div>
     <div class="user-input">
       <Switch
@@ -226,11 +197,10 @@
     </div>
     {#if loadMode}
       <div class="label">
-        Значение {loadMode === 1 ? 'тока, А' : 'напряжения, В'}
+        {loadMode === 1 ? 'Ток, А' : 'Напряжение, В'}
       </div>
       <div class="user-input">
         <RangeInput
-          style="grid-column: 5 / 7"
           step={0.1}
           onChange={setChargeLoad}
           defaultValue={load}
@@ -259,11 +229,12 @@
     <div class="label">Ток, А</div>
     <div class="value">{$IVData.current}</div>
     <div class="chart">
-      <canvas id="chart" height="400" width="520" />
+      <canvas id="chart" height="380" width="520" />
     </div>
   </main>
   <footer>
-    <Button style="grid-area: 6 / 4 / 8 / 6" on:click={toggleDrawing}>
+    <Button on:click={() => window.scrollTo(0, 0)} style="margin-right: auto">Назад</Button>
+    <Button style="margin-right: 0.8rem" on:click={toggleDrawing}>
       {isDrawing ? 'Стоп' : 'Старт'}
     </Button>
     <SaveButton disabled={saveDisabled} />
@@ -273,7 +244,7 @@
 <style>
   main {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(9, 1fr);
     grid-template-rows: repeat(10, 1fr);
     grid-column-gap: 24px;
     grid-row-gap: 8px;
@@ -281,28 +252,32 @@
     padding: 0 24px;
   }
   .chart {
-    grid-area: 1 / 6 / 11 / 13;
+    grid-area: 1 / 4 / 11 / 10;
   }
   footer {
     justify-content: space-between;
     padding: 0 24px;
   }
   .user-input {
-    grid-column: 3 / 6;
+    grid-column: 2 / 4;
   }
   .spacer {
-    grid-column: 1 / 6;
+    grid-column: 1 / 4;
   }
   .label {
-    grid-column: 1 / 3;
+    grid-column: 1 / 2;
   }
   .short-label {
     grid-column: 1 / 2;
   }
   .value {
-    grid-column: 4 / 6;
+    grid-column: 2 / 3;
   }
   .value {
     font-family: 'Oswald';
+  }
+  footer {
+    display: flex;
+    align-items: flex-start;
   }
 </style>
