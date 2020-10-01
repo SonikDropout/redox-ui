@@ -4,11 +4,18 @@
   export let name;
   export let style;
   export let checked;
+  export let disabled;
 </script>
 
-<label {style}>
+<label {style} class:disabled>
   {off}
-  <input class="hidden" type="checkbox" {name} bind:checked on:change />
+  <input
+    class="hidden"
+    type="checkbox"
+    {name}
+    bind:checked
+    on:change
+    {disabled} />
   <span class="track" class:checked>
     <span class="thumb" />
   </span>
@@ -19,6 +26,9 @@
   label {
     white-space: nowrap;
     display: block;
+  }
+  .disabled {
+    opacity: 0.5;
   }
   .track {
     border-radius: 2px;
