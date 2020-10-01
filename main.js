@@ -8,6 +8,7 @@ const { app, BrowserWindow, ipcMain } = electron;
 const checkUpdate = require('./src/utils/updater');
 
 let win,
+  updateAvailable,
   usbPath,
   initialData = {
     iv: Array(3).fill(0),
@@ -20,7 +21,7 @@ function reloadOnChange(win) {
   if (mode !== 'development') return { close: () => {} };
 
   const watcher = require('chokidar').watch(
-    path.join(__dirname, 'dist', '**'),
+    path.join(__dirname, 'static', '**'),
     {
       ignoreInitial: true,
     }
