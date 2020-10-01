@@ -23,9 +23,17 @@ const STATE_DATA = [
   'batteryBusOnOff',
   'PSUOnOff',
   'pumpOnOff',
+  'batChargeOnOff',
 ];
 
-const IV_DATA = ['cellVoltage', 'cellCurrent', 'setLoad', 'batVoltage', 'batCurrent', 'busVoltage'];
+const IV_DATA = [
+  'cellVoltage',
+  'cellCurrent',
+  'setLoad',
+  'batVoltage',
+  'batCurrent',
+  'busVoltage',
+];
 const IV_DIVIDERS = [1000, 1000, 10, 1000, 1000, 1000];
 
 const DATA_BYTE_LENGTH =
@@ -39,8 +47,10 @@ const COMMANDS = {
   batteryBusSwitch: (v) => [20, v],
   PSUSwitch: (v) => [24, v],
   pumpSwitch: (v) => [28, v],
-  setLoadMode: (v) => [28, v],
-  setLoad: (v) => [32, v * 10],
+  setLoadMode: (v) => [32, v],
+  setLoad: (v) => [36, v * 10],
+  cellChargeMode: (v) => [40, v],
+  batteryChargeMode: (v) => [44, v],
 };
 
 const CONSTRAINTS = {
