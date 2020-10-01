@@ -11,6 +11,7 @@
 </script>
 
 <Circuit />
+<Chart />
 <Version />
 {#if updateAvailable}
   <UpdateModal />

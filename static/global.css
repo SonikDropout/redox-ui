@@ -38,6 +38,7 @@ body {
   user-select: none;
   overflow: hidden;
   transition: transform 0.3s;
+  touch-action: none;
 }
 
 header {
