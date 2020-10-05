@@ -3,7 +3,7 @@ const url = require('url');
 const electron = require('electron');
 const logger = require('./src/utils/logger');
 const usbPort = require('./src/utils/usbPort');
-const { IS_RPI: isPi } = require('./src/constants');
+const { IS_RPI: isPi, IV_DATA, STATE_DATA } = require('./src/constants');
 const { app, BrowserWindow, ipcMain } = electron;
 const checkUpdate = require('./src/utils/updater');
 
@@ -11,8 +11,8 @@ let win,
   updateAvailable,
   usbPath,
   initialData = {
-    iv: Array(3).fill(0),
-    state: Array(3).fill(0),
+    iv: Array(IV_DATA.length).fill(0),
+    state: Array(STATE_DATA.length).fill(0),
   };
 
 const mode = process.env.NODE_ENV;
