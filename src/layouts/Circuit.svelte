@@ -41,7 +41,7 @@
           h{cx * 0.5} v{cy} h{-cx * 0.5} M{cx * 3.5},{cy * 2} h{-cx * 2.5} v{cy}
           h{cx * 0.5}" />
         <image
-          href="./icons/DcDc.png"
+          href="./icons/dcdc.png"
           x={cx * 2}
           y={cy * 0.5}
           width={cx}
@@ -66,7 +66,7 @@
           M{cx * 2.5},{cy * 4.5} h{cx * 2} M{cx * 2.5},{cy * 5.5} h{cx * 0.5} M{cx * 4},{cy * 5.5}
           h{cx * 0.5} v{-cy * 3.5}" />
         <image
-          href="./icons/DcDc.png"
+          href="./icons/dcdc.png"
           x={cx * 3}
           y={cy * 5}
           width={cx}
