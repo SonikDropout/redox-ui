@@ -1,5 +1,5 @@
 <script>
-  import Switch from '../atoms/Switch';
+  import Toggle from '../atoms/Toggle';
   import { IVData } from '../stores';
   export let isChargingDisabled;
 
@@ -59,15 +59,12 @@
       <span class="value">{storedBatEnergy.toFixed(2)}</span>
       Вт*ч
     </div>
-    <Switch
-      style="position: relative; left: -2.4rem; top: 1.6rem;"
-      on="заряд"
-      off="разряд"
-      on:change={chargeBattery}
-      disabled={isChargingDisabled} />
+    <div class="param charging">
+      Зарядка
+      <Toggle on:change={chargeBattery} disabled={isChargingDisabled} />
+    </div>
   </div>
 </div>
-
 
 <style>
   .power-sources {
@@ -85,6 +82,10 @@
   }
   .param {
     margin: 1.2rem 0;
+  }
+  .charging {
+    position: relative;
+    top: 2.4rem;
   }
   .value {
     display: inline-block;
