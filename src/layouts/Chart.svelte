@@ -100,21 +100,18 @@
     pointsStorage.drain();
     startLog();
     resetStored();
-    ipcRenderer.send('serialCommand', COMMANDS.start);
     subscribeData();
   }
 
   function startLog() {
-    const fileName = 'Redox';
     const headers = ['Время, с', 'Напряжение, В', 'Ток, А'];
-    ipcRenderer.send('startLog', fileName, headers);
+    ipcRenderer.send('startLog', headers);
     saveDisabled = false;
   }
 
   function stopDrawing() {
     isDrawing = false;
     unsubscribeData();
-    ipcRenderer.send('serialCommand', COMMANDS.stop);
   }
 
   function subscribeData() {
@@ -148,13 +145,6 @@
     storedEnergy.set(0);
   }
 
-  function toggleMode(e) {
-    isCharging = e.target.checked;
-    ipcRenderer.send('serialCommand', COMMANDS.cellChargeMode(+isCharging));
-    if (isCharging && !loadMode) setChargeMode(1);
-    resetLoadConstraint();
-  }
-
   function setChargeMode(mode) {
     loadMode = +mode;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(loadMode));
@@ -178,15 +168,6 @@
 <div class="layout">
   <header>Задание рабочих параметров ячейки</header>
   <main>
-    <div class="label">Режим работы</div>
-    <div class="user-input">
-      <Switch
-        checked={isCharging}
-        style="grid-column: span 2"
-        on:change={toggleMode}
-        off="разрядка"
-        on="зарядка" />
-    </div>
     <div class="label">Режим {isCharging ? 'зарядки' : 'разрядки'}:</div>
     <div class="user-input">
       <Select
