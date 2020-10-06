@@ -44,6 +44,7 @@
         if (requiresUpdate[key]) {
           requiresUpdate[key] = false;
           switches[key] = state[key + 'OnOff'];
+          updateDisabledSwitches(key);
         } else {
           requiresUpdate[key] = true;
         }
@@ -56,15 +57,19 @@
     if (!disabledSwitches[id]) {
       switches[id] = !switches[id];
       ipcRenderer.send('serialCommand', COMMANDS[id + 'Switch'](+switches[id]));
-      if (switches[id]) {
-        for (let key of EXCLUDING_SWITCHES[id]) {
-          disabledSwitches[key] += 1;
-          console.log(key, disabledSwitches[key]);
-        }
-      } else {
-        for (let key of EXCLUDING_SWITCHES[id]) {
-          disabledSwitches[key] -= disabledSwitches[key] > 0 ? 1 : 0;
-        }
+      updateDisabledSwitches(id);
+    }
+  }
+
+  function updateDisabledSwitches(id) {
+    if (switches[id]) {
+      for (let key of EXCLUDING_SWITCHES[id]) {
+        disabledSwitches[key] += 1;
+        console.log(key, disabledSwitches[key]);
+      }
+    } else {
+      for (let key of EXCLUDING_SWITCHES[id]) {
+        disabledSwitches[key] -= disabledSwitches[key] > 0 ? 1 : 0;
       }
     }
   }
