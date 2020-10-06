@@ -22,12 +22,20 @@
   import { COMMANDS, CONSTRAINTS } from '../constants';
   import pointsStorage from '../utils/pointsStorage';
 
+  ipcRenderer.send('startLog', ['t, s', 'U, V', 'I, A']);
+
   onMount(() => {
     chart = new Chart(
       document.getElementById('chart').getContext('2d'),
       configureChart(pointsStorage.points, { x: xAxis.symbol, y: yAxis.symbol })
     );
     chart.options.onClick = chart.resetZoom;
+    stateData.subscribe(state => {
+      if (!isDrawing && (state.cellBusOnOff || state.cellDcDcOnOff))
+        startDrawing();
+      if (!state.cellBusOnOff && !state.cellDcDcOnOff && isDrawing)
+        stopDrawing();
+    });
   });
 
   const xOptions = [
@@ -51,10 +59,12 @@
     { label: 'постояным напряжением', value: 2 },
   ];
 
-  let saveDisabled = true,
-    isDrawing,
+  $: isCharging = $stateData.cellDcDcOnOff;
+  $: resetLoadConstraint(isCharging);
+
+  let isDrawing,
     unsubscribeData,
-    isCharging = $stateData.mode,
+    isCharging = $stateData.cellDcDcOnOff,
     xAxis = xOptions[0],
     yAxis = yOptions[0],
     chart,
@@ -66,8 +76,6 @@
           (isCharging ? 'Charge' : 'Discharge')
       ],
     timeStart;
-
-  $: if (!$stateData.mode && $IVData.voltage < 4) startCharging();
 
   $: if (chart && xAxis) {
     pointsStorage.setX(xAxis.value);
@@ -81,32 +89,11 @@
     chart.update();
   }
 
-  function startCharging() {
-    toggleMode({ target: { checked: true } });
-    setChargeMode(2);
-    setChargeLoad(6);
-  }
-
-  function toggleDrawing() {
-    if (isDrawing) {
-      stopDrawing();
-    } else {
-      startDrawing();
-    }
-  }
-
   function startDrawing() {
     isDrawing = true;
     pointsStorage.drain();
-    startLog();
     resetStored();
     subscribeData();
-  }
-
-  function startLog() {
-    const headers = ['Время, с', 'Напряжение, В', 'Ток, А'];
-    ipcRenderer.send('startLog', headers);
-    saveDisabled = false;
   }
 
   function stopDrawing() {
@@ -116,21 +103,21 @@
 
   function subscribeData() {
     timeStart = 0;
-    isCharging = $stateData.mode;
     unsubscribeData = IVData.subscribe(addPoint);
   }
 
   function addPoint(iv) {
-    pointsStorage.addRow([timeStart++, iv.voltage, iv.current]);
+    pointsStorage.addRow([timeStart++, iv.cellVoltage, iv.cellCurrent]);
     ipcRenderer.send(
       'logRow',
       pointsStorage.rows[pointsStorage.rows.length - 1]
     );
     storedCharge.update(
-      charge => charge + (iv.current * (isCharging ? 1 : -1)) / 3.6
+      charge => charge + (iv.cellCurrent * (isCharging ? 1 : -1)) / 3.6
     );
     storedEnergy.update(
-      energy => energy + (iv.current * iv.voltage * (isCharging ? 1 : -1)) / 3.6
+      energy =>
+        energy + (iv.cellCurrent * iv.cellVoltage * (isCharging ? 1 : -1)) / 3.6
     );
     updateChart();
   }
@@ -144,7 +131,7 @@
     storedCharge.set(0);
     storedEnergy.set(0);
   }
-
+  
   function setChargeMode(mode) {
     loadMode = +mode;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(loadMode));
@@ -177,9 +164,7 @@
         onChange={setChargeMode} />
     </div>
     {#if loadMode}
-      <div class="label">
-        {loadMode === 1 ? 'Ток, А' : 'Напряжение, В'}
-      </div>
+      <div class="label">{loadMode === 1 ? 'Ток, А' : 'Напряжение, В'}</div>
       <div class="user-input">
         <RangeInput
           step={0.1}
@@ -214,11 +199,10 @@
     </div>
   </main>
   <footer>
-    <Button on:click={() => window.scrollTo(0, 0)} style="margin-right: auto">Назад</Button>
-    <Button style="margin-right: 0.8rem" on:click={toggleDrawing}>
-      {isDrawing ? 'Стоп' : 'Старт'}
+    <Button on:click={() => window.scrollTo(0, 0)} style="margin-right: auto">
+      Назад
     </Button>
-    <SaveButton disabled={saveDisabled} />
+    <SaveButton />
   </footer>
 </div>
 
