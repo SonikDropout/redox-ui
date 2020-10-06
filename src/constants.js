@@ -26,6 +26,15 @@ const STATE_DATA = [
   'batChargeOnOff',
 ];
 
+const EXCLUDING_SWITCHES = {
+  cellDcDc: ['cellLoad', 'cellBus'],
+  cellBus: ['cellDcDc'],
+  cellLoad: ['batteryLoad', 'cellDcDc'],
+  batteryLoad: ['cellLoad'],
+  batteryBus: ['batteryLoad'],
+  PSU: ['cellBus', 'batteryBus'],
+};
+
 const IV_DATA = [
   'cellVoltage',
   'cellCurrent',
@@ -72,4 +81,5 @@ module.exports = {
   DATA_BYTE_LENGTH,
   CONSTRAINTS,
   IV_DIVIDERS,
+  EXCLUDING_SWITCHES,
 };

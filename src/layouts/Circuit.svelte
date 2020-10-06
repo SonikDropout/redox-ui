@@ -1,7 +1,7 @@
 <script>
   import Button from '../atoms/Button';
   import { ipcRenderer } from 'electron';
-  import { COMMANDS } from '../constants';
+  import { COMMANDS, EXCLUDING_SWITCHES } from '../constants';
   import SwitchKey from '../atoms/SwitchKey';
   import PowerSources from '../organisms/PowerSources';
   import { IVData, stateData } from '../stores';
@@ -18,6 +18,24 @@
     PSU: $stateData.PSUOnOff,
   };
 
+  let disabledSwitches = {
+    cellDcDc: 0,
+    cellBus: 0,
+    cellLoad: 0,
+    batteryBus: 0,
+    batteryLoad: 0,
+    pump: 0,
+    PSU: 0,
+  };
+
+  for (let key in switches) {
+    if (switches[key]) {
+      for (let dk in EXCLUDING_SWITCHES[key]) {
+        disabledSwitches[dk] += 1;
+      }
+    }
+  }
+
   const requiresUpdate = {};
 
   stateData.subscribe(state => {
@@ -26,7 +44,6 @@
         if (requiresUpdate[key]) {
           requiresUpdate[key] = false;
           switches[key] = state[key + 'OnOff'];
-          switches = switches;
         } else {
           requiresUpdate[key] = true;
         }
@@ -36,8 +53,20 @@
 
   function switchGate(e) {
     const id = e.target.id;
-    switches[id] = !switches[id];
-    ipcRenderer.send('serialCommand', COMMANDS[id + 'Switch'](+switches[id]));
+    if (!disabledSwitches[id]) {
+      switches[id] = !switches[id];
+      ipcRenderer.send('serialCommand', COMMANDS[id + 'Switch'](+switches[id]));
+      if (switches[id]) {
+        for (let key of EXCLUDING_SWITCHES[id]) {
+          disabledSwitches[key] += 1;
+          console.log(key, disabledSwitches[key]);
+        }
+      } else {
+        for (let key of EXCLUDING_SWITCHES[id]) {
+          disabledSwitches[key] -= disabledSwitches[key] > 0 ? 1 : 0;
+        }
+      }
+    }
   }
 </script>
 

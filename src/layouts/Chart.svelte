@@ -31,9 +31,9 @@
     );
     chart.options.onClick = chart.resetZoom;
     stateData.subscribe(state => {
-      if (!isDrawing && (state.cellBusOnOff || state.cellDcDcOnOff))
+      if (!isDrawing && (state.cellBusOnOff || state.cellDcDcOnOff || state.cellLoadOnOff))
         startDrawing();
-      if (!state.cellBusOnOff && !state.cellDcDcOnOff && isDrawing)
+      if (!state.cellBusOnOff && !state.cellDcDcOnOff && !state.cellLoadOnOff && isDrawing)
         stopDrawing();
     });
   });
