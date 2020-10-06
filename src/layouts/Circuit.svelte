@@ -48,7 +48,7 @@
         } else {
           requiresUpdate[key] = true;
         }
-      }
+      } else if (requiresUpdate[key]) requiresUpdate[key] = false;
     }
   });
 
