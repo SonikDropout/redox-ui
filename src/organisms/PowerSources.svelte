@@ -1,6 +1,8 @@
 <script>
   import Toggle from '../atoms/Toggle';
   import { IVData } from '../stores';
+  import { ipcRenderer } from 'electron';
+  import { COMMANDS } from '../constants';
   export let isChargingDisabled;
 
   let storedBatCharge = 0,
