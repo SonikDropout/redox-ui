@@ -8,8 +8,7 @@
   const cx = 80;
   const cy = 80;
 
-
-  const switches = {
+  let switches = {
     cellDcDc: $stateData.cellDcDcOnOff,
     cellBus: $stateData.cellBusOnOff,
     cellLoad: $stateData.cellLoadOnOff,
@@ -19,12 +18,27 @@
     PSU: $stateData.PSUOnOff,
   };
 
+  const requiresUpdate = {};
+
+  stateData.subscribe(state => {
+    for (let key in switches) {
+      if (switches[key] != state[key + 'OnOff']) {
+        if (requiresUpdate[key]) {
+          requiresUpdate[key] = false;
+          switches[key] = state[key + 'OnOff'];
+          switches = switches;
+        } else {
+          requiresUpdate[key] = true;
+        }
+      }
+    }
+  });
+
   function switchGate(e) {
     const id = e.target.id;
     switches[id] = !switches[id];
     ipcRenderer.send('serialCommand', COMMANDS[id + 'Switch'](+switches[id]));
   }
-
 </script>
 
 <div class="layout">
@@ -145,7 +159,7 @@
         <!-- /PSU related circuit -->
 
         <!-- bus related circuit -->
-        <text x={-cx * 3.8} y={cy * 4.8} transform="rotate(270, 50, 50)">
+        <text x={cx * 4.8} y={cy * 3.5}>
           Напряжение шины питания, В: {$IVData.busVoltage}
         </text>
         <!-- /bus related circuit -->
