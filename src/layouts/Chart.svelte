@@ -31,9 +31,17 @@
     );
     chart.options.onClick = chart.resetZoom;
     stateData.subscribe(state => {
-      if (!isDrawing && (state.cellBusOnOff || state.cellDcDcOnOff || state.cellLoadOnOff))
+      if (
+        !isDrawing &&
+        (state.cellBusOnOff || state.cellDcDcOnOff || state.cellLoadOnOff)
+      )
         startDrawing();
-      if (!state.cellBusOnOff && !state.cellDcDcOnOff && !state.cellLoadOnOff && isDrawing)
+      if (
+        !state.cellBusOnOff &&
+        !state.cellDcDcOnOff &&
+        !state.cellLoadOnOff &&
+        isDrawing
+      )
         stopDrawing();
     });
   });
@@ -49,12 +57,6 @@
   ];
 
   const chargingOptions = [
-    { label: 'постояным током', value: 1 },
-    { label: 'постояным напряжением', value: 2 },
-  ];
-
-  const dischargingOptions = [
-    { label: 'на внеш. нагрузке', value: 0 },
     { label: 'постояным током', value: 1 },
     { label: 'постояным напряжением', value: 2 },
   ];
@@ -112,12 +114,9 @@
       'logRow',
       pointsStorage.rows[pointsStorage.rows.length - 1]
     );
-    storedCharge.update(
-      charge => charge + (iv.cellCurrent * (isCharging ? 1 : -1)) / 3.6
-    );
+    storedCharge.update(charge => charge + iv.cellCurrent / 3.6);
     storedEnergy.update(
-      energy =>
-        energy + (iv.cellCurrent * iv.cellVoltage * (isCharging ? 1 : -1)) / 3.6
+      energy => energy + (iv.cellCurrent * iv.cellVoltage) / 3.6
     );
     updateChart();
   }
@@ -131,7 +130,7 @@
     storedCharge.set(0);
     storedEnergy.set(0);
   }
-  
+
   function setChargeMode(mode) {
     loadMode = +mode;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(loadMode));
@@ -155,12 +154,12 @@
 <div class="layout">
   <header>Задание рабочих параметров ячейки</header>
   <main>
-    <div class="label">Режим {isCharging ? 'зарядки' : 'разрядки'}:</div>
+    <div class="label">Режим зарядки / разрядки:</div>
     <div class="user-input">
       <Select
         defaultValue={loadMode}
         style="grid-column: span 5"
-        options={isCharging ? chargingOptions : dischargingOptions}
+        options={chargingOptions}
         onChange={setChargeMode} />
     </div>
     {#if loadMode}
@@ -210,9 +209,9 @@
   main {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(10, 1fr);
+    grid-template-rows: repeat(10, auto);
     grid-column-gap: 24px;
-    grid-row-gap: 8px;
+    grid-row-gap: 1.2rem;
     align-items: center;
     padding: 0 24px;
   }

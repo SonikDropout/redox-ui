@@ -194,7 +194,8 @@
 
         <!-- bus related circuit -->
         <text x={cx * 4.8} y={cy * 3.5}>
-          Напряжение шины питания, В: {$IVData.busVoltage}
+          <tspan dx="0">Напряжение шины</tspan>
+          <tspan dx="-16.6rem" dy="2rem">питания, В: {$IVData.busVoltage}</tspan>
         </text>
         <!-- /bus related circuit -->
 

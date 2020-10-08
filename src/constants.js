@@ -32,7 +32,7 @@ const EXCLUDING_SWITCHES = {
   cellLoad: ['batteryLoad', 'cellDcDc'],
   batteryLoad: ['cellLoad'],
   batteryBus: ['batteryLoad'],
-  PSU: ['cellBus', 'batteryBus'],
+  PSU: ['cellBus'],
 };
 
 const IV_DATA = [
