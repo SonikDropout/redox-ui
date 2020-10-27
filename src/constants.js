@@ -30,7 +30,7 @@ const EXCLUDING_SWITCHES = {
   cellDcDc: ['cellLoad', 'cellBus'],
   cellBus: ['cellDcDc'],
   cellLoad: ['batteryLoad', 'cellDcDc'],
-  batteryLoad: ['cellLoad'],
+  batteryLoad: ['cellLoad', 'batteryBus'],
   batteryBus: ['batteryLoad'],
   // PSU: ['cellBus'],
 };
