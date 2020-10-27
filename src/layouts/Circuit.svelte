@@ -29,8 +29,8 @@
   };
 
   for (let key in switches) {
-    if (switches[key]) {
-      for (let dk in EXCLUDING_SWITCHES[key]) {
+    if (EXCLUDING_SWITCHES[key]) {
+      for (let dk of EXCLUDING_SWITCHES[key]) {
         disabledSwitches[dk] += 1;
       }
     }
