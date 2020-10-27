@@ -32,7 +32,7 @@ const EXCLUDING_SWITCHES = {
   cellLoad: ['batteryLoad', 'cellDcDc'],
   batteryLoad: ['cellLoad'],
   batteryBus: ['batteryLoad'],
-  PSU: ['cellBus'],
+  // PSU: ['cellBus'],
 };
 
 const IV_DATA = [
@@ -63,9 +63,9 @@ const COMMANDS = {
 };
 
 const CONSTRAINTS = {
-  voltageCharge: [6, 8],
+  voltageCharge: [8, 16],
   currentCharge: [0, 1.5],
-  voltageDischarge: [4, 8],
+  voltageDischarge: [8, 16],
   currentDischarge: [0, 1.5],
   pumpPower: [0, 100],
 };
