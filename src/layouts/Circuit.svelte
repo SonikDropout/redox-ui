@@ -29,7 +29,7 @@
   };
 
   for (let key in switches) {
-    if (EXCLUDING_SWITCHES[key]) {
+    if (switches[key] && EXCLUDING_SWITCHES[key]) {
       for (let dk of EXCLUDING_SWITCHES[key]) {
         disabledSwitches[dk] += 1;
       }
@@ -63,13 +63,15 @@
 
   function updateDisabledSwitches(id) {
     if (EXCLUDING_SWITCHES[id]) {
-      for (let key of EXCLUDING_SWITCHES[id]) {
-        disabledSwitches[key] += 1;
-        console.log(key, disabledSwitches[key]);
-      }
-    } else {
-      for (let key of EXCLUDING_SWITCHES[id]) {
-        disabledSwitches[key] -= disabledSwitches[key] > 0 ? 1 : 0;
+      if (switches[id]) {
+        for (let key of EXCLUDING_SWITCHES[id]) {
+          disabledSwitches[key] += 1;
+          console.log(key, disabledSwitches[key]);
+        }
+      } else {
+        for (let key of EXCLUDING_SWITCHES[id]) {
+          disabledSwitches[key] -= disabledSwitches[key] > 0 ? 1 : 0;
+        }
       }
     }
   }
@@ -195,7 +197,9 @@
         <!-- bus related circuit -->
         <text x={cx * 4.8} y={cy * 3.5}>
           <tspan dx="0">Напряжение шины</tspan>
-          <tspan dx="-16.6rem" dy="2rem">питания, В: {$IVData.busVoltage}</tspan>
+          <tspan dx="-16.6rem" dy="2rem">
+            питания, В: {$IVData.busVoltage}
+          </tspan>
         </text>
         <!-- /bus related circuit -->
 
