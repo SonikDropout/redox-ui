@@ -62,7 +62,7 @@
   }
 
   function updateDisabledSwitches(id) {
-    if (switches[id]) {
+    if (EXCLUDING_SWITCHES[id]) {
       for (let key of EXCLUDING_SWITCHES[id]) {
         disabledSwitches[key] += 1;
         console.log(key, disabledSwitches[key]);
