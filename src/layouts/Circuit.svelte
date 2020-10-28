@@ -6,7 +6,7 @@
   import PowerSources from '../organisms/PowerSources';
   import { IVData, stateData } from '../stores';
   const cx = 80;
-  const cy = 80;
+  const cy = 75;
 
   let switches = {
     cellDcDc: $stateData.cellDcDcOnOff,
@@ -96,6 +96,9 @@
           y={cy * 0.5}
           width={cx}
           height={cy} />
+        <text x={cx} y={cy * 0.4} class="caption green">
+          <tspan>Зарядный преобразователь</tspan>
+        </text>
         <SwitchKey
           boundingBox={{ x: cx * 3.5, y: cy * 0.5, width: cx * 0.5, height: cy }}
           on:click={switchGate}
@@ -121,6 +124,9 @@
           y={cy * 5}
           width={cx}
           height={cy} />
+        <text x={cx * 2} y={cy * 6.3} class="caption green">
+          <tspan>Зарядный преобразователь</tspan>
+        </text>
         <circle cx={cx * 2} cy={cy * 5} r="4" />
         <circle cx={cx * 2.5} cy={cy * 4.5} r="4" />
         <circle cx={cx * 2.5} cy={cy * 5.5} r="4" />
@@ -149,6 +155,10 @@
           y={cy * 2.5}
           width={cx * 1.5}
           height={cy * 1.5} />
+
+        <text x={cx * 2.7} y={cy * 4.3} class="caption orange">
+          <tspan>Нагрузка</tspan>
+        </text>
         <SwitchKey
           boundingBox={{ x: cx * 1.5, y: cy * 2.5, width: cx * 0.5, height: cy }}
           on:click={switchGate}
@@ -170,6 +180,9 @@
           y={cy * 4}
           width={cx * 1.5}
           height={cy * 1.5} />
+        <text x={cx * 6} y={cy * 5.8} class="caption blue">
+          <tspan>Насос</tspan>
+        </text>
         <SwitchKey
           boundingBox={{ x: cx * 5, y: cy * 4, width: cx * 0.5, height: cy }}
           on:click={switchGate}
@@ -186,6 +199,9 @@
           y={cy * 1.5}
           width={cx * 1.5}
           height={cy * 1.5} />
+        <text x={cx * 6} y={cy * 1.4} class="caption blue">
+          <tspan>Блок питания</tspan>
+        </text>
         <SwitchKey
           boundingBox={{ x: cx * 5, y: cy * 2, width: cx * 0.5, height: cy }}
           on:click={switchGate}
@@ -246,5 +262,14 @@
   }
   footer {
     text-align: center;
+  }
+  .caption.blue {
+    fill: var(--corporate-blue);
+  }
+  .caption.orange {
+    fill: var(--corporate-orange);
+  }
+  .caption.green {
+    fill: var(--corporate-emerald)
   }
 </style>

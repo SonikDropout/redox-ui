@@ -10,10 +10,10 @@
     storedCellCharge = 0,
     storedCellEnergy = 0;
 
-  $: storedBatCharge += $IVData.batCurrent / 3600;
-  $: storedCellCharge += $IVData.cellCurrent / 3600;
-  $: storedBatEnergy += ($IVData.batCurrent * $IVData.batVoltage) / 3600;
-  $: storedCellEnergy += ($IVData.cellCurrent * $IVData.cellVoltage) / 3600;
+  $: storedBatCharge -= $IVData.batCurrent / 3600;
+  $: storedCellCharge -= $IVData.cellCurrent / 3600;
+  $: storedBatEnergy -= ($IVData.batCurrent * $IVData.batVoltage) / 3600;
+  $: storedCellEnergy -= ($IVData.cellCurrent * $IVData.cellVoltage) / 3600;
 
   function chargeBattery(e) {
     ipcRenderer.send(
