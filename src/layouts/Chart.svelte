@@ -61,6 +61,12 @@
     { label: 'постояным напряжением', value: 2 },
   ];
 
+  const dischargingOptions = [
+    { label: 'внешний потребитель', value: 0 },
+    { label: 'постояным током', value: 1 },
+    { label: 'постояным напряжением', value: 2 },
+  ];
+
   $: isCharging = $stateData.cellDcDcOnOff;
   $: resetLoadConstraint(isCharging);
 
@@ -159,7 +165,7 @@
       <Select
         defaultValue={loadMode}
         style="grid-column: span 5"
-        options={chargingOptions}
+        options={isCharging ? chargingOptions : dischargingOptions}
         onChange={setChargeMode} />
     </div>
     {#if loadMode}

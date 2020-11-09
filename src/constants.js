@@ -64,9 +64,9 @@ const COMMANDS = {
 
 const CONSTRAINTS = {
   voltageCharge: [8, 16],
-  currentCharge: [0, 1.5],
+  currentCharge: [0, 2.5],
   voltageDischarge: [8, 16],
-  currentDischarge: [0, 1.5],
+  currentDischarge: [0, 2.5],
   pumpPower: [0, 100],
 };
 
