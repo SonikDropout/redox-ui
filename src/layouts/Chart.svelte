@@ -57,6 +57,7 @@
   ];
 
   const chargingOptions = [
+    { label: 'зарядка отключена', value: 0 },
     { label: 'постояным током', value: 1 },
     { label: 'постояным напряжением', value: 2 },
   ];
@@ -138,6 +139,7 @@
   }
 
   function setChargeMode(mode) {
+    if (loadMode == 1 && mode == 2) setChargeLoad(16);
     loadMode = +mode;
     ipcRenderer.send('serialCommand', COMMANDS.setLoadMode(loadMode));
     resetLoadConstraint();

@@ -52,6 +52,15 @@
     }
   });
 
+  $: if ($IVData.cellVoltage < 8) startCharging();
+
+  function startCharging() {
+    for (const load of ['cellLoad', 'cellBus']) {
+      switches[load] = 0;
+      ipcRenderer.send('serialCommand', COMMANDS[load + 'Switch'](0));
+    }
+  }
+
   function switchGate(e) {
     const id = e.target.id;
     if (!disabledSwitches[id]) {
