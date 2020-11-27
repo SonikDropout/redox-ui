@@ -52,12 +52,22 @@
     }
   });
 
-  $: if ($IVData.cellVoltage < 8) startCharging();
+  $: dischargingBlocked = $IVData.cellVoltage < 8;
 
-  function startCharging() {
+  $: if (dischargingBlocked && (switches.cellLoad || switches.cellBus)) blockDischarging();
+  $: if (!dischargingBlocked && (disabledSwitches.cellLoad || disabledSwitches.cellBus)) unblockDischarging();
+
+  function blockDischarging() {
     for (const load of ['cellLoad', 'cellBus']) {
       switches[load] = 0;
       ipcRenderer.send('serialCommand', COMMANDS[load + 'Switch'](0));
+      disabledSwitches[load] += 1;
+    }
+  }
+
+  function unblockDischarging() {
+    for (const load of ['cellLoad', 'cellBus']) {
+      disabledSwitches[load] -= 1;
     }
   }
 
