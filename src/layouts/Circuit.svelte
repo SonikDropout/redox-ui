@@ -28,6 +28,8 @@
     PSU: 0,
   };
 
+  let dischargingBlocked = false;
+
   for (let key in switches) {
     if (switches[key] && EXCLUDING_SWITCHES[key]) {
       for (let dk of EXCLUDING_SWITCHES[key]) {
@@ -52,10 +54,8 @@
     }
   });
 
-  $: dischargingBlocked = $IVData.cellVoltage < 8;
-
-  $: if (dischargingBlocked && (switches.cellLoad || switches.cellBus)) blockDischarging();
-  $: if (!dischargingBlocked && (disabledSwitches.cellLoad || disabledSwitches.cellBus)) unblockDischarging();
+  $: if ($IVData.cellVoltage < 8 && !dischargingBlocked) blockDischarging();
+  $: if ($IVData.cellVoltage > 8 && dischargingBlocked) allowDischarging();
 
   function blockDischarging() {
     for (const load of ['cellLoad', 'cellBus']) {
@@ -63,12 +63,14 @@
       ipcRenderer.send('serialCommand', COMMANDS[load + 'Switch'](0));
       disabledSwitches[load] += 1;
     }
+    dischargingBlocked = true;
   }
 
-  function unblockDischarging() {
+  function allowDischarging() {
     for (const load of ['cellLoad', 'cellBus']) {
       disabledSwitches[load] -= 1;
     }
+    dischargingBlocked = false;
   }
 
   function switchGate(e) {
@@ -85,7 +87,6 @@
       if (switches[id]) {
         for (let key of EXCLUDING_SWITCHES[id]) {
           disabledSwitches[key] += 1;
-          console.log(key, disabledSwitches[key]);
         }
       } else {
         for (let key of EXCLUDING_SWITCHES[id]) {
